@@ -2,12 +2,13 @@ Summary:	Delivery framework for general Input Method configuration
 #Summary(pl.UTF-8):	-
 Name:		imsettings
 Version:	1.2.4
-Release:	1
+Release:	2
 License:	LGPL
 Group:		Applications/System
 Source0:	http://imsettings.googlecode.com/files/%{name}-%{version}.tar.bz2
 # Source0-md5:	aa4fdd4b24015c925ed53a6be24a790e
 Patch0:		%{name}-constraint-of-language.patch
+Patch1:		%{name}-no-bash.patch
 URL:		http://code.google.com/p/imsettings/
 BuildRequires:	desktop-file-utils
 BuildRequires:	gettext-devel
@@ -154,6 +155,7 @@ This package contains a module to get this working on LXDE.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 %configure \

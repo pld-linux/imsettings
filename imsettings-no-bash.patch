@@ -1,0 +1,238 @@
+--- imsettings-1.2.4/data/xinput.sh.in.in.orig	2011-07-17 22:59:00.385360415 +0200
++++ imsettings-1.2.4/data/xinput.sh.in.in	2011-07-17 22:55:53.000000000 +0200
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/bin/sh
+ # Copyright (C) 1999-2004,2007-2009 Red Hat, Inc. All rights reserved. This
+ # copyrighted material is made available to anyone wishing to use, modify,
+ # copy, or redistribute it subject to the terms and conditions of the
+@@ -10,27 +10,27 @@
+ #
+ # X Input method setup script
+ 
+-function log_init() {
++log_init() {
+     if [ ! -n "$DRY_RUN" ]; then
+ 	rm -rf $HOME/.imsettings.log
+ 	touch $HOME/.imsettings.log
+     fi
+ }
+ 
+-function log() {
++log() {
+     echo "$@" >> $HOME/.imsettings.log
+ }
+ 
+-function is_dbus_enabled() {
++is_dbus_enabled() {
+     imsettings-check --check-dbus
+     [ $? -eq 0 ]
+ }
+ 
+-function is_imsettings_enabled() {
++is_imsettings_enabled() {
+     [ -z "$DISABLE_IMSETTINGS" ] && is_dbus_enabled
+ }
+ 
+-function check_imsettings_capability() {
++check_imsettings_capability() {
+     mod=$1
+     imsettings-check --check-modules >/dev/null
+     ret=$?
+@@ -41,7 +41,7 @@
+     return $ret
+ }
+ 
+-function is_gtk_supported() {
++is_gtk_supported() {
+     [ -n "$IMSETTINGS_DISABLE_DESKTOP_CHECK" ] && return 0
+     case "$DESKTOP_SESSION" in
+ 	*gnome|openbox)
+@@ -66,7 +66,7 @@
+     return 1
+ }
+ 
+-function is_qt_supported() {
++is_qt_supported() {
+     [ -n "$IMSETTINGS_DISABLE_DESKTOP_CHECK" ] && return 0
+     case "$DESKTOP_SESSION" in
+ 	*)
+@@ -79,7 +79,7 @@
+     return 1
+ }
+ 
+-function is_xim_supported() {
++is_xim_supported() {
+     [ -n "$IMSETTINGS_DISABLE_DESKTOP_CHECK" ] && return 0
+     if check_imsettings_capability xim; then
+ 	return 0
+@@ -88,7 +88,7 @@
+     return 1
+ }
+ 
+-function setup_gtk_immodule() {
++setup_gtk_immodule() {
+     if is_imsettings_enabled && is_gtk_supported; then
+ 	# Ensure GTK_IM_MODULE is empty. otherwise GTK+ doesn't pick up immodule through XSETTINGS
+ 	unset GTK_IM_MODULE
+@@ -98,7 +98,7 @@
+     fi
+ }
+ 
+-function setup_qt_immodule() {
++setup_qt_immodule() {
+     if is_imsettings_enabled && is_qt_supported; then
+ 	# FIXME: Qt doesn't support XSETTINGS for immodule yet.
+ 	#        We still need to go with the older way.
+@@ -108,7 +108,7 @@
+     fi
+ }
+ 
+-function setup_xim() {
++setup_xim() {
+     if is_imsettings_enabled && is_xim_supported; then
+ 	# setup XMODIFIERS
+ 	XMODIFIERS="@im=imsettings"
+@@ -119,7 +119,7 @@
+     fi
+ }
+ 
+-function run_imsettings() {
++run_imsettings() {
+     print_info
+     if [ -n "$DRY_RUN" ]; then
+ 	log "*** DRY RUN MODE: running IM through imsettings"
+@@ -134,7 +134,7 @@
+     fi
+ }
+ 
+-function run_xim() {
++run_xim() {
+     print_info
+     if [ -n "$DRY_RUN" ]; then
+ 	log "*** DRY RUN MODE: running IM without imsettings"
+@@ -147,7 +147,7 @@
+     fi
+ }
+ 
+-function print_result() {
++print_result() {
+     $1
+     if [ $? -eq 0 ]; then
+ 	log yes
+@@ -156,7 +156,7 @@
+     fi
+ }
+ 
+-function print_info() {
++print_info() {
+     log "imsettings information"
+     log "=========================="
+     log -n "Is DBus enabled: "
+@@ -187,13 +187,13 @@
+ unset TERM
+ if [ -r /etc/profile.d/lang.sh ]; then
+     # for Fedora etc
+-    source /etc/profile.d/lang.sh
++    . /etc/profile.d/lang.sh
+ elif [ -r /etc/default/locale ]; then
+     # for Debian
+-    source /etc/default/locale
++    . /etc/default/locale
+ elif [ -r /etc/env.d/02locale ]; then
+     # for Gentoo
+-    source /etc/env.d/02locale
++    . /etc/env.d/02locale
+ fi
+ [ -n "$oldterm" ] && export TERM=$oldterm
+ 
+@@ -205,7 +205,7 @@
+ [ -z "$IMSETTINGS_DISABLE_USER_XINPUTRC" ] && IMSETTINGS_DISABLE_USER_XINPUTRC=no
+ 
+ if [ -r "$USER_XINPUTRC" -a "x$IMSETTINGS_DISABLE_USER_XINPUTRC" = "xno" ]; then
+-    source "$USER_XINPUTRC"
++    . "$USER_XINPUTRC"
+     if [ ! -h "$USER_XINPUTRC" ]; then
+ 	SHORT_DESC="User Specific"
+     fi
+@@ -216,7 +216,7 @@
+     _sourced_xinputrc=0
+     for i in $_im_language_list; do
+         if echo $tmplang | grep -q -E "^$i"; then
+-            source "$SYS_XINPUTRC"
++            . "$SYS_XINPUTRC"
+             _sourced_xinputrc=1
+             break
+         fi
+@@ -227,7 +227,7 @@
+         _xcompose_language_list="am_ET el_GR fi_FI pt_BR ru_RU"
+         for i in $_xcompose_language_list; do
+             if echo $tmplang | grep -q -E "^$i"; then
+-                source @XINPUT_PATH@/xcompose.conf
++                . @XINPUT_PATH@/xcompose.conf
+                 _sourced_xinputrc=1
+                 break
+             fi
+@@ -235,7 +235,7 @@
+     fi
+     if [ $_sourced_xinputrc -eq 0 ]; then
+         # Read none.conf to set up properly for locales not listed the above.
+-        source @XINPUT_PATH@/none.conf
++        . @XINPUT_PATH@/none.conf
+     fi
+ fi
+ 
+--- imsettings-1.2.4/data/xinputinfo.sh.in.orig	2011-03-08 07:39:32.000000000 +0100
++++ imsettings-1.2.4/data/xinputinfo.sh.in	2011-07-17 22:57:52.000000000 +0200
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/bin/sh
+ # xinputinfo.sh
+ # Copyright (C) 2008 Red Hat, Inc. All rights reserved.
+ #
+@@ -20,7 +20,7 @@
+ # Foundation, Inc., 59 Temple Place - Suite 330,
+ # Boston, MA 02111-1307, USA.
+ 
+-function is_script() {
++is_script() {
+     if [ "x$(sed -re '/^[ 	]?*[a-zA-Z0-9_]+=.*/{d};/[ 	]?*#.*/{d}' $1)" = "x" ]; then
+ 	return 1
+     else
+@@ -36,13 +36,13 @@
+ unset TERM
+ if [ -r /etc/profile.d/lang.sh ]; then
+     # for Fedora etc
+-    source /etc/profile.d/lang.sh
++    . /etc/profile.d/lang.sh
+ elif [ -r /etc/default/locale ]; then
+     # for Debian
+-    source /etc/default/locale
++    . /etc/default/locale
+ elif [ -r /etc/env.d/02locale ]; then
+     # for Gentoo
+-    source /etc/env.d/02locale
++    . /etc/env.d/02locale
+ fi
+ [ -n "$oldterm" ] && export TERM=$oldterm
+ 
+@@ -52,16 +52,16 @@
+ unset AUXILIARY_PROGRAM AUXILIARY_ARGS GTK_IM_MODULE ICON IMSETTINGS_IGNORE_ME LONG_DESC PREFERENCE_PROGRAM PREFERENCE_ARGS QT_IM_MODULE SHORT_DESC XIM XIM_PROGRAM XIM_ARGS IS_XIM
+ 
+ if [ $# -gt 0 ]; then
+-    source $1
++    . $1
+     IMSETTINGS_FILENAME=$1
+ else
+     [ -z "$IMSETTINGS_DISABLE_USER_XINPUTRC" ] && IMSETTINGS_DISABLE_USER_XINPUTRC=no
+ 
+     if [ -r "$USER_XINPUTRC" -a "x$IMSETTINGS_DISABLE_USER_XINPUTRC" = "xno" ]; then
+-	source "$USER_XINPUTRC"
++	. "$USER_XINPUTRC"
+ 	IMSETTINGS_FILENAME=$USER_XINPUTRC
+     elif [ -r "$SYS_XINPUTRC" ]; then
+-	source "$SYS_XINPUTRC"
++	. "$SYS_XINPUTRC"
+ 	IMSETTINGS_FILENAME=$SYS_XINPUTRC
+     fi
+ fi
