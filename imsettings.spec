@@ -2,7 +2,7 @@ Summary:	Delivery framework for general Input Method configuration
 #Summary(pl.UTF-8):	-
 Name:		imsettings
 Version:	1.2.4
-Release:	2
+Release:	3
 License:	LGPL
 Group:		Applications/System
 Source0:	http://imsettings.googlecode.com/files/%{name}-%{version}.tar.bz2
@@ -141,7 +141,7 @@ This package contains a module to get this working on Xfce.
 Summary:	LXDE support on imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
-Requires:	lxde-settings-daemon
+#Requires:	lxde-settings-daemon
 Requires:	lxsession
 Provides:	imsettings-desktop-module = %{version}-%{release}
 
