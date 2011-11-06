@@ -1,24 +1,34 @@
+#
+# Conditional build:
+%bcond_without	xfce	# Xfce support module
+#
 Summary:	Delivery framework for general Input Method configuration
-#Summary(pl.UTF-8):	-
+Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
-Version:	1.2.4
-Release:	3
-License:	LGPL
+Version:	1.2.5
+Release:	1
+License:	LGPL v2+
 Group:		Applications/System
+#Source0Download: http://code.google.com/p/imsettings/downloads/list
 Source0:	http://imsettings.googlecode.com/files/%{name}-%{version}.tar.bz2
-# Source0-md5:	aa4fdd4b24015c925ed53a6be24a790e
+# Source0-md5:	e6333b293f1381609dab9c98c17e00d2
 Patch0:		%{name}-constraint-of-language.patch
 Patch1:		%{name}-no-bash.patch
 URL:		http://code.google.com/p/imsettings/
+BuildRequires:	GConf2-devel >= 2.0
 BuildRequires:	desktop-file-utils
 BuildRequires:	gettext-devel
-BuildRequires:	glib2 >= 1:2.26.0
+BuildRequires:	glib2-devel >= 1:2.26.0
+BuildRequires:	gtk+2-devel >= 2:2.12.0
+BuildRequires:	gtk-doc >= 1.0
 BuildRequires:	libgxim-devel >= 0.3.1
-BuildRequires:	libnotify-devel
-BuildRequires:	xfconf-devel
+BuildRequires:	libnotify-devel >= 0.7.0
+BuildRequires:	pkgconfig
+%{?with_xfce:BuildRequires:	xfconf-devel}
 BuildRequires:	xorg-lib-libX11-devel
-Requires:	imsettings-desktop-module = %{version}-%{release}
-Requires:	imsettings-libs = %{version}-%{release}
+Requires:	%{name}-desktop-module = %{version}-%{release}
+Requires:	%{name}-libs = %{version}-%{release}
+Requires:	libnotify >= 0.7.0
 Requires:	xinitrc-ng
 Requires:	xorg-app-xinit
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -30,12 +40,19 @@ to restart applications or the desktop.
 
 This package contains the core DBus services and some utilities.
 
-#%description -l pl.UTF-8
+%description -l pl.UTF-8
+IMSettings to szkielet udostępniający ustawienia metod wprowadzania
+znaków (Input Method) i wykonujący zmiany tak, że wchodzą w życie
+natychmiast bez potrzeby restartu aplikacji ani środowiska
+graficznego.
+
+Ten pakiet zawiera główne usługi DBus oraz trochę narzędzi.
 
 %package libs
 Summary:	IMSettings library
 Summary(pl.UTF-8):	Biblioteka IMSettings
 Group:		Libraries
+Requires:	glib2 >= 1:2.26.0
 
 %description libs
 IMSettings library.
@@ -48,6 +65,7 @@ Summary:	Header files for IMSettings library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki IMSettings
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
+Requires:	glib2-devel >= 1:2.26.0
 
 %description devel
 Header files for IMSettings library.
@@ -67,90 +85,149 @@ Static IMSettings library.
 %description static -l pl.UTF-8
 Statyczna biblioteka IMSettings.
 
-%package        xim
+%package xim
 Summary:	XIM support on imsettings
+Summary(pl.UTF-8):	Obsługa XIM dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
 Requires:	im-chooser
+Requires:	libgxim >= 0.3.1
 
-%description    xim
+%description xim
 IMSettings is a framework that delivers Input Method settings and
 applies the changes so they take effect immediately without any need
 to restart applications or the desktop.
 
 This package contains a module to get this working with XIM.
 
-%package        gnome2
-Summary:	GNOME 2 support on imsettings
+%description xim -l pl.UTF-8
+IMSettings to szkielet udostępniający ustawienia metod wprowadzania
+znaków (Input Method) i wykonujący zmiany tak, że wchodzą w życie
+natychmiast bez potrzeby restartu aplikacji ani środowiska
+graficznego.
+
+Ten pakiet zawiera moduł umożliwiający to dla usługi XIM.
+
+%package gnome2
+Summary:	GNOME 2 (GConf) support on imsettings
+Summary(pl.UTF-8):	Obsługa GNOME 2 (GConf) dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
 Requires:	im-chooser
-Provides:	imsettings-desktop-module = %{version}-%{release}
+Provides:	%{name}-desktop-module = %{version}-%{release}
 
-%description    gnome2
+%description gnome2
 IMSettings is a framework that delivers Input Method settings and
 applies the changes so they take effect immediately without any need
 to restart applications or the desktop.
 
-This package contains a module to get this working on GNOME 2.
+This package contains a module to get this working on GNOME 2 (using
+GConf).
 
-%package        gnome3
-Summary:	GNOME 3 support on imsettings
+%description gnome2 -l pl.UTF-8
+IMSettings to szkielet udostępniający ustawienia metod wprowadzania
+znaków (Input Method) i wykonujący zmiany tak, że wchodzą w życie
+natychmiast bez potrzeby restartu aplikacji ani środowiska
+graficznego.
+
+Ten pakiet zawiera moduł umożliwiający to dla aplikacji GNOME 2
+(korzystających z GConfa).
+
+%package gnome3
+Summary:	GNOME 3 (GSettings) support on imsettings
+Summary(pl.UTF-8):	Obsługa GNOME 3 (GSettings) dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
 Requires:	im-chooser
-Provides:	imsettings-desktop-module = %{version}-%{release}
+Provides:	%{name}-desktop-module = %{version}-%{release}
 
-%description    gnome3
+%description gnome3
 IMSettings is a framework that delivers Input Method settings and
 applies the changes so they take effect immediately without any need
 to restart applications or the desktop.
 
-This package contains a module to get this working on GNOME 3.
+This package contains a module to get this working on GNOME 3 (using
+GSettings).
 
-%package        qt
+%description gnome3 -l pl.UTF-8
+IMSettings to szkielet udostępniający ustawienia metod wprowadzania
+znaków (Input Method) i wykonujący zmiany tak, że wchodzą w życie
+natychmiast bez potrzeby restartu aplikacji ani środowiska
+graficznego.
+
+Ten pakiet zawiera moduł umożliwiający to dla aplikacji GNOME 3
+(korzystających z GSettings).
+
+%package qt
 Summary:	Qt support on imsettings
+Summary(pl.UTF-8):	Obsługa Qt dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
 Requires:	im-chooser
-Provides:	imsettings-desktop-module = %{version}-%{release}
+Provides:	%{name}-desktop-module = %{version}-%{release}
 
-%description    qt
+%description qt
 IMSettings is a framework that delivers Input Method settings and
 applies the changes so they take effect immediately without any need
 to restart applications or the desktop.
 
 This package contains a module to get this working on Qt applications.
 
-%package        xfce
+%description qt -l pl.UTF-8
+IMSettings to szkielet udostępniający ustawienia metod wprowadzania
+znaków (Input Method) i wykonujący zmiany tak, że wchodzą w życie
+natychmiast bez potrzeby restartu aplikacji ani środowiska
+graficznego.
+
+Ten pakiet zawiera moduł umożliwiający to dla aplikacji Qt.
+
+%package xfce
 Summary:	Xfce support on imsettings
+Summary(pl.UTF-8):	Obsługa Xfce dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
 Requires:	im-chooser
 Requires:	xfce4-settings >= 4.6.0
-Provides:	imsettings-desktop-module = %{version}-%{release}
+Provides:	%{name}-desktop-module = %{version}-%{release}
 
-%description    xfce
+%description xfce
 IMSettings is a framework that delivers Input Method settings and
 applies the changes so they take effect immediately without any need
 to restart applications or the desktop.
 
 This package contains a module to get this working on Xfce.
 
-%package        lxde
+%description xfce -l pl.UTF-8
+IMSettings to szkielet udostępniający ustawienia metod wprowadzania
+znaków (Input Method) i wykonujący zmiany tak, że wchodzą w życie
+natychmiast bez potrzeby restartu aplikacji ani środowiska
+graficznego.
+
+Ten pakiet zawiera moduł umożliwiający to dla aplikacji Xfce.
+
+%package lxde
 Summary:	LXDE support on imsettings
+Summary(pl.UTF-8):	Obsługa LXDE dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
 #Requires:	lxde-settings-daemon
 Requires:	lxsession
-Provides:	imsettings-desktop-module = %{version}-%{release}
+Provides:	%{name}-desktop-module = %{version}-%{release}
 
-%description    lxde
+%description lxde
 IMSettings is a framework that delivers Input Method settings and
 applies the changes so they take effect immediately without any need
 to restart applications or the desktop.
 
 This package contains a module to get this working on LXDE.
+
+%description lxde -l pl.UTF-8
+IMSettings to szkielet udostępniający ustawienia metod wprowadzania
+znaków (Input Method) i wykonujący zmiany tak, że wchodzą w życie
+natychmiast bez potrzeby restartu aplikacji ani środowiska
+graficznego.
+
+Ten pakiet zawiera moduł umożliwiający to dla aplikacji LXDE.
 
 %prep
 %setup -q
@@ -205,7 +282,7 @@ rm -rf $RPM_BUILD_ROOT
 %files libs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libimsettings.so.*.*.*
-%attr(755,root,root) %{_libdir}/libimsettings.so.[0-9]
+%attr(755,root,root) %ghost %{_libdir}/libimsettings.so.5
 
 %files devel
 %defattr(644,root,root,755)
@@ -218,27 +295,29 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{_libdir}/libimsettings.a
 
-%files  xim
+%files xim
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/imsettings-xim
 %attr(755,root,root) %{_libdir}/%{name}/libimsettings-xim.so
 
-%files  gnome2
+%files gnome2
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/%{name}/libimsettings-gconf.so
 
-%files  gnome3
+%files gnome3
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/%{name}/libimsettings-gsettings.so
 
-%files  qt
+%files qt
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/%{name}/libimsettings-qt.so
 
-%files  xfce
+%if %{with xfce}
+%files xfce
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/%{name}/libimsettings-xfce.so
+%endif
 
-%files  lxde
+%files lxde
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/%{name}/libimsettings-lxde.so
