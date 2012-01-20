@@ -5,20 +5,22 @@
 Summary:	Delivery framework for general Input Method configuration
 Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
-Version:	1.2.6
+Version:	1.2.7
 Release:	1
 License:	LGPL v2+
 Group:		Applications/System
 #Source0Download: http://code.google.com/p/imsettings/downloads/list
 Source0:	http://imsettings.googlecode.com/files/%{name}-%{version}.tar.bz2
-# Source0-md5:	7104a2b7413b4ba91d9e12317ec8ee6f
+# Source0-md5:	3ff0fdbf0c339fd34d440151684d10a3
 Patch0:		%{name}-constraint-of-language.patch
 Patch1:		%{name}-no-bash.patch
 URL:		http://code.google.com/p/imsettings/
 BuildRequires:	GConf2-devel >= 2.0
+BuildRequires:	dbus-devel
 BuildRequires:	desktop-file-utils
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.26.0
+BuildRequires:	gnome-introspection-devel >= 1.30.0
 BuildRequires:	gtk+2-devel >= 2:2.12.0
 BuildRequires:	gtk-doc >= 1.0
 BuildRequires:	libgxim-devel >= 0.3.1
@@ -283,12 +285,14 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libimsettings.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libimsettings.so.5
+%{_libdir}/girepository-1.0/IMSettings-1.2.typelib
 
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libimsettings.so
 %{_pkgconfigdir}/imsettings.pc
 %{_includedir}/imsettings
+%{_datadir}/gir-1.0/IMSettings-1.2.gir
 %{_gtkdocdir}/imsettings
 
 %files static
