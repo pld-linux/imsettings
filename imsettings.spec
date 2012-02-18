@@ -5,13 +5,13 @@
 Summary:	Delivery framework for general Input Method configuration
 Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
-Version:	1.2.7.1
+Version:	1.2.8
 Release:	1
 License:	LGPL v2+
 Group:		Applications/System
 #Source0Download: http://code.google.com/p/imsettings/downloads/list
 Source0:	http://imsettings.googlecode.com/files/%{name}-%{version}.tar.bz2
-# Source0-md5:	8d6c4cd54b0eedbd7bc7f0343d9e9e68
+# Source0-md5:	3450a647f5742fd9f60fc1487c72a3f2
 Patch0:		%{name}-constraint-of-language.patch
 Patch1:		%{name}-no-bash.patch
 URL:		http://code.google.com/p/imsettings/
@@ -22,6 +22,8 @@ BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.26.0
 BuildRequires:	gobject-introspection-devel >= 1.30.0
 BuildRequires:	gtk+2-devel >= 2:2.12.0
+# "fallback support in GTK+"
+#BuildRequires:	gtk+3-devel >= 3.3.3
 BuildRequires:	gtk-doc >= 1.0
 BuildRequires:	libgxim-devel >= 0.3.1
 BuildRequires:	libnotify-devel >= 0.7.0

@@ -1,5 +1,5 @@
---- imsettings-1.2.7/data/xinput.sh.in.in.orig	2012-01-20 19:30:14.868541977 +0100
-+++ imsettings-1.2.7/data/xinput.sh.in.in	2012-01-20 19:46:38.011908229 +0100
+--- imsettings-1.2.8/data/xinput.sh.in.in.orig	2012-02-17 21:15:19.743090124 +0100
++++ imsettings-1.2.8/data/xinput.sh.in.in	2012-02-18 07:28:16.724321553 +0100
 @@ -1,4 +1,4 @@
 -#!/bin/bash
 +#!/bin/sh
@@ -146,8 +146,8 @@
 +print_info() {
      log "imsettings information"
      log "=========================="
-     log -n "Is DBus enabled: "
-@@ -237,13 +237,13 @@
+     log "XINPUTRC: $READ_XINPUTRC"
+@@ -242,13 +242,13 @@
  unset TERM
  if [ -r /etc/profile.d/lang.sh ]; then
      # for Fedora etc
@@ -164,25 +164,25 @@
  fi
  [ -n "$oldterm" ] && export TERM=$oldterm
  
-@@ -255,7 +255,7 @@
+@@ -260,7 +260,7 @@
  [ -z "$IMSETTINGS_DISABLE_USER_XINPUTRC" ] && IMSETTINGS_DISABLE_USER_XINPUTRC=no
  
  if [ -r "$USER_XINPUTRC" -a "x$IMSETTINGS_DISABLE_USER_XINPUTRC" = "xno" ]; then
 -    source "$USER_XINPUTRC"
 +    . "$USER_XINPUTRC"
+     READ_XINPUTRC=$USER_XINPUTRC
      if [ ! -h "$USER_XINPUTRC" ]; then
  	SHORT_DESC="User Specific"
-     fi
-@@ -266,7 +266,7 @@
+@@ -272,7 +272,7 @@
      _sourced_xinputrc=0
      for i in $_im_language_list; do
          if echo $tmplang | grep -q -E "^$i"; then
 -            source "$SYS_XINPUTRC"
 +            . "$SYS_XINPUTRC"
+             READ_XINPUTRC=$SYS_XINPUTRC
              _sourced_xinputrc=1
              break
-         fi
-@@ -277,7 +277,7 @@
+@@ -284,7 +284,7 @@
          _xcompose_language_list="am_ET el_GR fi_FI pt_BR ru_RU"
          for i in $_xcompose_language_list; do
              if echo $tmplang | grep -q -E "^$i"; then
@@ -191,7 +191,7 @@
                  _sourced_xinputrc=1
                  break
              fi
-@@ -285,7 +285,7 @@
+@@ -292,7 +292,7 @@
      fi
      if [ $_sourced_xinputrc -eq 0 ]; then
          # Read none.conf to set up properly for locales not listed the above.

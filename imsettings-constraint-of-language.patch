@@ -1,11 +1,11 @@
-diff -pruN imsettings-0.106.0.1.orig/data/xinput.sh.in.in imsettings-0.106.0.1/data/xinput.sh.in.in
---- imsettings-0.106.0.1.orig/data/xinput.sh.in.in	2009-03-04 12:18:10.000000000 +0900
-+++ imsettings-0.106.0.1/data/xinput.sh.in.in	2009-03-04 17:44:14.000000000 +0900
-@@ -158,7 +158,33 @@ if [ -r "$USER_XINPUTRC" -a "x$IMSETTING
+--- imsettings-1.2.8/data/xinput.sh.in.in.orig	2012-02-10 03:25:18.000000000 +0100
++++ imsettings-1.2.8/data/xinput.sh.in.in	2012-02-17 21:14:57.666422719 +0100
+@@ -266,8 +266,34 @@
  	SHORT_DESC="User Specific"
      fi
  elif [ -r "$SYS_XINPUTRC" ]; then
 -    source "$SYS_XINPUTRC"
+-    READ_XINPUTRC=$SYS_XINPUTRC
 +    # FIXME: This hardcoded list has to be gone in the future.
 +    # Locales that normally use input-method for native input
 +    _im_language_list="as bn gu hi ja kn ko mai ml mr ne or pa si ta te th ur vi zh"
@@ -13,6 +13,7 @@ diff -pruN imsettings-0.106.0.1.orig/data/xinput.sh.in.in imsettings-0.106.0.1/d
 +    for i in $_im_language_list; do
 +        if echo $tmplang | grep -q -E "^$i"; then
 +            source "$SYS_XINPUTRC"
++            READ_XINPUTRC=$SYS_XINPUTRC
 +            _sourced_xinputrc=1
 +            break
 +        fi
