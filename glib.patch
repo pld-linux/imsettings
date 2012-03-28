@@ -1,0 +1,10 @@
+--- imsettings-1.2.8.1/tests/rhbz_599924.c.wiget	2012-03-28 11:43:15.323676660 +0200
++++ imsettings-1.2.8.1/tests/rhbz_599924.c	2012-03-28 11:43:24.583676509 +0200
+@@ -27,7 +27,6 @@
+ 
+ #include <unistd.h>
+ #include <glib.h>
+-#include <glib/gthread.h>
+ #include "imsettings-info.h"
+ #include "main.h"
+ 

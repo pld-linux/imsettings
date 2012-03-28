@@ -6,7 +6,7 @@ Summary:	Delivery framework for general Input Method configuration
 Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
 Version:	1.2.8.1
-Release:	2
+Release:	3
 License:	LGPL v2+
 Group:		Applications/System
 #Source0Download: http://code.google.com/p/imsettings/downloads/list
@@ -14,6 +14,7 @@ Source0:	http://imsettings.googlecode.com/files/%{name}-%{version}.tar.bz2
 # Source0-md5:	6e32ed5572277ada32b286aecbc24631
 Patch0:		%{name}-constraint-of-language.patch
 Patch1:		%{name}-no-bash.patch
+Patch2:		glib.patch
 URL:		http://code.google.com/p/imsettings/
 BuildRequires:	GConf2-devel >= 2.0
 BuildRequires:	dbus-devel
@@ -237,9 +238,11 @@ Ten pakiet zawiera moduł umożliwiający to dla aplikacji LXDE.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %configure \
+	--disable-silent-rules \
 	--with-xinputsh=50-xinput.sh \
 	--with-html-dir=%{_gtkdocdir}
 
