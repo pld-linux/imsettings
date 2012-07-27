@@ -5,16 +5,15 @@
 Summary:	Delivery framework for general Input Method configuration
 Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
-Version:	1.2.9
+Version:	1.3.0
 Release:	1
 License:	LGPL v2+
 Group:		Applications/System
 #Source0Download: http://code.google.com/p/imsettings/downloads/list
 Source0:	http://imsettings.googlecode.com/files/%{name}-%{version}.tar.bz2
-# Source0-md5:	3e4b97705bca1fba195e3a0cabd253d5
+# Source0-md5:	e4c91126454de14a5ac9ff70a5ba7724
 Patch0:		%{name}-constraint-of-language.patch
 Patch1:		%{name}-no-bash.patch
-Patch2:		glib.patch
 URL:		http://code.google.com/p/imsettings/
 BuildRequires:	GConf2-devel >= 2.0
 BuildRequires:	dbus-devel
@@ -238,7 +237,6 @@ Ten pakiet zawiera moduł umożliwiający to dla aplikacji LXDE.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %build
 %configure \
@@ -290,14 +288,14 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libimsettings.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libimsettings.so.5
-%{_libdir}/girepository-1.0/IMSettings-1.2.typelib
+%{_libdir}/girepository-1.0/IMSettings-1.3.typelib
 
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libimsettings.so
 %{_pkgconfigdir}/imsettings.pc
 %{_includedir}/imsettings
-%{_datadir}/gir-1.0/IMSettings-1.2.gir
+%{_datadir}/gir-1.0/IMSettings-1.3.gir
 %{_gtkdocdir}/imsettings
 
 %files static
