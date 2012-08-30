@@ -5,13 +5,13 @@
 Summary:	Delivery framework for general Input Method configuration
 Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
-Version:	1.3.0
+Version:	1.3.1
 Release:	1
 License:	LGPL v2+
 Group:		Applications/System
 #Source0Download: http://code.google.com/p/imsettings/downloads/list
 Source0:	http://imsettings.googlecode.com/files/%{name}-%{version}.tar.bz2
-# Source0-md5:	e4c91126454de14a5ac9ff70a5ba7724
+# Source0-md5:	dcfdb82943a0bbda51dfe0857a53b4d7
 Patch0:		%{name}-constraint-of-language.patch
 Patch1:		%{name}-no-bash.patch
 URL:		http://code.google.com/p/imsettings/
