@@ -1,4 +1,3 @@
-# TODO: mate support [mateconf-2.0.pc]
 #
 # Conditional build:
 %bcond_without	mate	# MATE support module
