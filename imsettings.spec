@@ -1,6 +1,7 @@
 # TODO: mate support [mateconf-2.0.pc]
 #
 # Conditional build:
+%bcond_without	mate	# MATE support module
 %bcond_without	xfce	# Xfce support module
 #
 Summary:	Delivery framework for general Input Method configuration
@@ -28,6 +29,7 @@ BuildRequires:	gtk+2-devel >= 2:2.12.0
 BuildRequires:	gtk-doc >= 1.0
 BuildRequires:	libgxim-devel >= 0.3.1
 BuildRequires:	libnotify-devel >= 0.7.0
+%{?with_mate:BuildRequires:	mate-conf-devel}
 BuildRequires:	pkgconfig
 %{?with_xfce:BuildRequires:	xfconf-devel}
 BuildRequires:	xorg-lib-libX11-devel
@@ -115,7 +117,7 @@ Ten pakiet zawiera moduł umożliwiający to dla usługi XIM.
 
 %package gnome2
 Summary:	GNOME 2 (GConf) support on imsettings
-Summary(pl.UTF-8):	Obsługa GNOME 2 (GConf) dla imsettings
+Summary(pl.UTF-8):	Obsługa GNOME 2 (GConfa) dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
 Requires:	im-chooser
@@ -162,6 +164,31 @@ graficznego.
 
 Ten pakiet zawiera moduł umożliwiający to dla aplikacji GNOME 3
 (korzystających z GSettings).
+
+%package mate
+Summary:	MATE (MateConf) support on imsettings
+Summary(pl.UTF-8):	Obsługa MATE (MateConfa) dla imsettings
+Group:		Applications/System
+Requires:	%{name} = %{version}-%{release}
+Requires:	im-chooser
+Provides:	%{name}-desktop-module = %{version}-%{release}
+
+%description mate
+IMSettings is a framework that delivers Input Method settings and
+applies the changes so they take effect immediately without any need
+to restart applications or the desktop.
+
+This package contains a module to get this working on MATE (using
+MateConf).
+
+%description mate -l pl.UTF-8
+IMSettings to szkielet udostępniający ustawienia metod wprowadzania
+znaków (Input Method) i wykonujący zmiany tak, że wchodzą w życie
+natychmiast bez potrzeby restartu aplikacji ani środowiska
+graficznego.
+
+Ten pakiet zawiera moduł umożliwiający to dla aplikacji MATE
+(korzystających z MateConfa).
 
 %package qt
 Summary:	Qt support on imsettings
@@ -315,6 +342,12 @@ rm -rf $RPM_BUILD_ROOT
 %files gnome3
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/%{name}/libimsettings-gsettings.so
+
+%if %{with mate}
+%files mate
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/%{name}/libimsettings-mateconf.so
+%endif
 
 %files qt
 %defattr(644,root,root,755)
