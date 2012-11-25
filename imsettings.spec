@@ -6,16 +6,17 @@
 Summary:	Delivery framework for general Input Method configuration
 Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
-Version:	1.4.0
-Release:	3
+Version:	1.5.0
+Release:	1
 License:	LGPL v2+
 Group:		Applications/System
 #Source0Download: http://code.google.com/p/imsettings/downloads/list
 Source0:	http://imsettings.googlecode.com/files/%{name}-%{version}.tar.bz2
-# Source0-md5:	eb2e37056afe2f4be4b843a6b31f5bd1
+# Source0-md5:	31db79221b3b2a64ed9a07dc96abd540
 Patch0:		%{name}-constraint-of-language.patch
 Patch1:		%{name}-no-bash.patch
 Patch2:		%{name}-format-security.patch
+Patch3:		%{name}-gxim.patch
 URL:		http://code.google.com/p/imsettings/
 BuildRequires:	GConf2-devel >= 2.0
 BuildRequires:	dbus-devel
@@ -23,11 +24,11 @@ BuildRequires:	desktop-file-utils
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.26.0
 BuildRequires:	gobject-introspection-devel >= 1.30.0
-BuildRequires:	gtk+2-devel >= 2:2.12.0
-# "fallback support in GTK+"
-#BuildRequires:	gtk+3-devel >= 3.3.3
+# for fallback support in GTK+
+BuildRequires:	gtk+2-devel >= 2:2.24.11
+BuildRequires:	gtk+3-devel >= 3.3.3
 BuildRequires:	gtk-doc >= 1.0
-BuildRequires:	libgxim-devel >= 0.3.1
+BuildRequires:	libgxim-devel >= 0.4.0
 BuildRequires:	libnotify-devel >= 0.7.0
 %{?with_mate:BuildRequires:	mate-conf-devel}
 BuildRequires:	pkgconfig
@@ -98,7 +99,7 @@ Summary(pl.UTF-8):	Obsługa XIM dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
 Requires:	im-chooser
-Requires:	libgxim >= 0.3.1
+Requires:	libgxim >= 0.4.0
 
 %description xim
 IMSettings is a framework that delivers Input Method settings and
@@ -266,6 +267,7 @@ Ten pakiet zawiera moduł umożliwiający to dla aplikacji LXDE.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 %configure \
@@ -304,10 +306,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/imsettings-reload
 %attr(755,root,root) %{_bindir}/imsettings-list
 %attr(755,root,root) %{_bindir}/imsettings-info
-%attr(755,root,root) %{_bindir}/imsettings-check
 %attr(755,root,root) %{_bindir}/imsettings-switch
 
 %dir %{_libdir}/%{name}
+%attr(755,root,root) %{_libdir}/imsettings-check
 %attr(755,root,root) %{_libdir}/imsettings-daemon
 %attr(755,root,root) %{_libdir}/xinputinfo.sh
 %{_datadir}/dbus-1/services/imsettings-daemon.service
@@ -348,6 +350,7 @@ rm -rf $RPM_BUILD_ROOT
 %files mate
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/%{name}/libimsettings-mateconf.so
+%attr(755,root,root) %{_libdir}/%{name}/libimsettings-mate-gsettings.so
 %endif
 
 %files qt

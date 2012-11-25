@@ -1,0 +1,1016 @@
+--- imsettings-1.5.0/backends/xim/loopback.c.orig	2012-11-25 18:47:51.931778441 +0100
++++ imsettings-1.5.0/backends/xim/loopback.c	2012-11-25 18:51:06.498441053 +0100
+@@ -33,7 +33,7 @@
+ #include <gdk/gdkkeysyms.h>
+ #include <gdk/gdkx.h>
+ #include <libgxim/gximattr.h>
+-#include <libgxim/gximmessage.h>
++#include <libgxim/gximmessages.h>
+ #include <libgxim/gximmisc.h>
+ #include <libgxim/gximprotocol.h>
+ #include <libgxim/gximtransport.h>
+@@ -348,14 +348,14 @@
+ 							    default_im_styles[i],
+ 							    &error);
+ 					if (error) {
+-						g_xim_message_gerror(G_XIM_CORE (loopback)->message, error);
++						g_xim_messages_gerror(G_XIM_CORE (loopback)->message, error);
+ 						g_clear_error(&error);
+ 					}
+ 				}
+ 				g_object_set(attr, l->data, styles, NULL);
+ 				g_xim_styles_free(styles);
+ 			} else {
+-				g_xim_message_bug(G_XIM_CORE (loopback)->message,
++				g_xim_messages_bug(G_XIM_CORE (loopback)->message,
+ 						  "Unsupported IM attribute: %s",
+ 						  (gchar *)l->data);
+ 			}
+@@ -413,20 +413,20 @@
+ 
+ 	imid = xim_loopback_find_imid(loopback);
+ 	if (imid > 0) {
+-		g_xim_message_debug(G_XIM_PROTOCOL_GET_IFACE (proto)->message, "loopback/proto/event",
++		g_xim_messages_debug(G_XIM_PROTOCOL_GET_IFACE (proto)->message, "loopback/proto/event",
+ 				    "XIM_OPEN[%s] from %p - imid: %d",
+ 				    g_xim_str_get_string(locale),
+ 				    G_XIM_NATIVE_WINDOW_TO_POINTER (client_window),
+ 				    imid);
+ 		if (compose_open(lconn->composer, g_xim_str_get_string(locale))) {
+ 			if (!compose_parse(lconn->composer)) {
+-				g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++				g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 						      "Unable to parse a compose file for %s. disabling.",
+ 						      g_xim_str_get_string(locale));
+ 			}
+ 			compose_close(lconn->composer);
+ 		} else {
+-			g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++			g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 					      "Unable to open a compose file for %s. disabling.",
+ 					      g_xim_str_get_string(locale));
+ 		}
+@@ -469,7 +469,7 @@
+ 				gtype = g_xim_attr_get_gtype_by_name(attr, l->data);
+ 				vtype = g_xim_gtype_to_value_type(gtype);
+ 				if (vtype == G_XIM_TYPE_INVALID) {
+-					g_xim_message_bug(G_XIM_CORE (loopback)->message,
++					g_xim_messages_bug(G_XIM_CORE (loopback)->message,
+ 							  "Unable to compose a XIMATTR for %s",
+ 							  (gchar *)l->data);
+ 					continue;
+@@ -499,7 +499,7 @@
+ 				gtype = g_xim_attr_get_gtype_by_name(attr, l->data);
+ 				vtype = g_xim_gtype_to_value_type(gtype);
+ 				if (vtype == G_XIM_TYPE_INVALID) {
+-					g_xim_message_bug(G_XIM_CORE (loopback)->message,
++					g_xim_messages_bug(G_XIM_CORE (loopback)->message,
+ 							  "Unable to compose a XICATTR for %s",
+ 							  (gchar *)l->data);
+ 					continue;
+@@ -528,7 +528,7 @@
+ 		g_slist_free(imlist);
+ 		g_slist_free(iclist);
+ 	} else {
+-		g_xim_message_warning(G_XIM_CORE (loopback)->message,
++		g_xim_messages_warning(G_XIM_CORE (loopback)->message,
+ 				      "No imid available for %p.",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 	}
+@@ -546,13 +546,13 @@
+ 	GdkNativeWindow client_window = g_xim_transport_get_client_window(G_XIM_TRANSPORT (proto));
+ 
+ 	if ((conn = g_hash_table_lookup(loopback->conn_table, GUINT_TO_POINTER ((guint)imid))) == NULL) {
+-		g_xim_message_warning(G_XIM_CORE (loopback)->message,
++		g_xim_messages_warning(G_XIM_CORE (loopback)->message,
+ 				      "Invalid imid `%d' from %p to close the connection.",
+ 				      imid,
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+ 	}
+-	g_xim_message_debug(G_XIM_PROTOCOL_GET_IFACE (proto)->message, "loopback/proto/event",
++	g_xim_messages_debug(G_XIM_PROTOCOL_GET_IFACE (proto)->message, "loopback/proto/event",
+ 			    "XIM_CLOSE[imid:%d] from %p",
+ 			    imid,
+ 			    G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+@@ -623,7 +623,7 @@
+ 						   GPOINTER_TO_INT (l->data));
+ 		vtype = g_xim_gtype_to_value_type(gtype);
+ 		if (vtype == G_XIM_TYPE_INVALID) {
+-			g_xim_message_warning(G_XIM_CORE (loopback)->message,
++			g_xim_messages_warning(G_XIM_CORE (loopback)->message,
+ 					      "Invalid attribute ID %d received from %p",
+ 					      GPOINTER_TO_INT (l->data),
+ 					      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+@@ -631,7 +631,7 @@
+ 		}
+ 		value = g_xim_attr_get_value_by_id(G_XIM_ATTR (attr),
+ 						   GPOINTER_TO_INT (l->data));
+-		g_xim_message_debug(G_XIM_CORE (loopback)->message, "loopback/proto/attr",
++		g_xim_messages_debug(G_XIM_CORE (loopback)->message, "loopback/proto/attr",
+ 				    "IM Attribute %d: %p",
+ 				    GPOINTER_TO_INT (l->data),
+ 				    value);
+@@ -709,7 +709,7 @@
+ 						gtype = g_xim_attr_get_gtype_by_name(attr, l->data);
+ 						vtype = g_xim_gtype_to_value_type(gtype);
+ 						if (vtype == G_XIM_TYPE_INVALID) {
+-							g_xim_message_bug(G_XIM_CORE (loopback)->message,
++							g_xim_messages_bug(G_XIM_CORE (loopback)->message,
+ 									  "Unable to compose a XICATTR for %s",
+ 									  (gchar *)l->data);
+ 							continue;
+@@ -773,7 +773,7 @@
+ 		gchar *msg = g_strdup_printf("Invalid input-context ID: [%d,%d]", imid, icid);
+ 		gboolean retval;
+ 
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "%s", msg);
+ 		retval = g_xim_connection_cmd_error(G_XIM_CONNECTION (proto),
+ 						    imid, icid, G_XIM_EMASK_VALID_IMID | G_XIM_EMASK_VALID_ICID,
+@@ -803,7 +803,7 @@
+ 		gchar *msg = g_strdup_printf("Invalid input-context ID: [%d,%d]", imid, icid);
+ 		gboolean retval;
+ 
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "%s", msg);
+ 		retval = g_xim_connection_cmd_error(G_XIM_CONNECTION (proto),
+ 						    imid, icid, G_XIM_EMASK_VALID_IMID | G_XIM_EMASK_VALID_ICID,
+@@ -844,7 +844,7 @@
+ 		gchar *msg = g_strdup_printf("Invalid input-context ID: [%d,%d]", imid, icid);
+ 		gboolean retval;
+ 
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "%s", msg);
+ 		retval = g_xim_connection_cmd_error(G_XIM_CONNECTION (proto),
+ 						    imid, icid, G_XIM_EMASK_VALID_IMID | G_XIM_EMASK_VALID_ICID,
+@@ -888,7 +888,7 @@
+ 	if (nested) {
+ 		a = g_xim_attribute_new_with_value(nid, G_XIM_TYPE_NESTEDLIST, nested);
+ 		list = g_slist_append(list, a);
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "No separator found in NESTEDLIST. is might be highly likely a bug in the client application.");
+ 	}
+ 	retval = g_xim_server_connection_cmd_get_ic_values_reply(G_XIM_SERVER_CONNECTION (proto),
+@@ -938,7 +938,7 @@
+ 	gboolean retval = FALSE;
+ 
+ 	if (ic == NULL) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Invalid input-context ID: %d",
+ 				      icid);
+ 		goto end;
+@@ -953,7 +953,7 @@
+ 		c->flag = flag;
+ 		c->event = gdk_event_copy(event);
+ 		g_queue_push_tail(ic->keyeventq, c);
+-		g_xim_message_debug(G_XIM_PROTOCOL_GET_IFACE (proto)->message, "loopback/proto/event",
++		g_xim_messages_debug(G_XIM_PROTOCOL_GET_IFACE (proto)->message, "loopback/proto/event",
+ 				    "Queueing a keyevent. (imid: %d, icid: %d, type: %s, keyval: %X)",
+ 				    imid, icid,
+ 				    event->type == GDK_KEY_PRESS ? "KeyPress" : "KeyRelease",
+@@ -974,7 +974,7 @@
+ 	if (compose_lookup(lconn->composer, &ic->sequence_state,
+ 			   event->key.keyval, event->key.state,
+ 			   &string, &keysym)) {
+-		g_xim_message_debug(G_XIM_PROTOCOL_GET_IFACE (proto)->message, "loopback/proto/event",
++		g_xim_messages_debug(G_XIM_PROTOCOL_GET_IFACE (proto)->message, "loopback/proto/event",
+ 				    "Entering the compose sequence: %s",
+ 				    gdk_keyval_name(event->key.keyval));
+ 		if (ic->sequence_state->candidates == NULL) {
+@@ -999,7 +999,7 @@
+ 			/* Ensure that we'll try to find out a sequence from the beginning next time */
+ 			ic->sequence_state = NULL;
+ 
+-			g_xim_message_debug(G_XIM_PROTOCOL_GET_IFACE (proto)->message, "loopback/proto/event",
++			g_xim_messages_debug(G_XIM_PROTOCOL_GET_IFACE (proto)->message, "loopback/proto/event",
+ 					    "Composed result: symbol %s, string %s, code 0x%x",
+ 					    gdk_keyval_name(keysym), string, event->key.hardware_keycode);
+ 
+@@ -1069,13 +1069,13 @@
+ 	c = g_queue_pop_head(q);
+ 	closure = (GClosure *)g_xim_protocol_lookup_protocol_by_id(c->proto, G_XIM_FORWARD_EVENT, 0);
+ 	if (closure == NULL) {
+-		g_xim_message_bug(G_XIM_PROTOCOL_GET_IFACE (c->proto)->message,
++		g_xim_messages_bug(G_XIM_PROTOCOL_GET_IFACE (c->proto)->message,
+ 				  "No closure to re-send back a XIM_FORWARD_EVENT.");
+ 	} else {
+ 		lconn = XIM_LOOPBACK_CONNECTION (c->proto);
+ 		ic = g_hash_table_lookup(lconn->ic_table, GUINT_TO_POINTER ((guint)c->icid));
+ 		ic->resend = TRUE;
+-		g_xim_message_debug(G_XIM_PROTOCOL_GET_IFACE (c->proto)->message, "loopback/proto/event",
++		g_xim_messages_debug(G_XIM_PROTOCOL_GET_IFACE (c->proto)->message, "loopback/proto/event",
+ 				    "Re-processing XIM_FORWARD_EVENT (imid: %d, icid: %d, type: %s, keyval: %X)",
+ 				    c->imid, c->icid,
+ 				    c->event->type == GDK_KEY_PRESS ? "KeyPress" : "KeyRelease",
+@@ -1085,7 +1085,7 @@
+ 							    c->imid, c->icid, c->flag, c->event);
+ 		ic->resend = FALSE;
+ 		if (!retval) {
+-			g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (c->proto)->message,
++			g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (c->proto)->message,
+ 					      "Unable to re-send back a XIM_FORWARD_EVENT. this event will be discarded.");
+ 		}
+ 	}
+--- imsettings-1.5.0/backends/xim/proxy.c.orig	2012-11-25 18:58:30.871765124 +0100
++++ imsettings-1.5.0/backends/xim/proxy.c	2012-11-25 18:59:40.341763672 +0100
+@@ -35,7 +35,7 @@
+ #include <gdk/gdkx.h>
+ #include <libgxim/gximattr.h>
+ #include <libgxim/gximerror.h>
+-#include <libgxim/gximmessage.h>
++#include <libgxim/gximmessages.h>
+ #include <libgxim/gximmisc.h>
+ #include <libgxim/gximprotocol.h>
+ #include <libgxim/gximtransport.h>
+@@ -57,7 +57,7 @@
+ 		_rep_->imid = (_imid_);					\
+ 		_rep_->icid = (_icid_);					\
+ 		g_queue_push_tail((_p_)->pendingq, _rep_);		\
+-		g_xim_message_debug((_msg_), "proxy/task",		\
++		g_xim_messages_debug((_msg_), "proxy/task",		\
+ 				    "%s(++): %s pending tasks: %d",	\
+ 				    __FUNCTION__,			\
+ 				    g_type_name(G_TYPE_FROM_INSTANCE (_p_)), \
+@@ -84,7 +84,7 @@
+ 				g_free(_l_->data);			\
+ 				g_queue_delete_link((_p_)->pendingq, _l_); \
+ 			} else {					\
+-				g_xim_message_warning((_msg_),		\
++				g_xim_messages_warning((_msg_),		\
+ 						      "No such tasks is waiting for: %d, %d [%s,%s]", \
+ 						      (_mj_), (_mn_),	\
+ 						      __FUNCTION__,	\
+@@ -92,7 +92,7 @@
+ 			}						\
+ 			g_free(_rep_);					\
+ 		}							\
+-		g_xim_message_debug((_msg_), "proxy/task",		\
++		g_xim_messages_debug((_msg_), "proxy/task",		\
+ 				    "%s(--): %s pending tasks: %d",	\
+ 				    __FUNCTION__,			\
+ 				    g_type_name(G_TYPE_FROM_INSTANCE (_p_)), \
+@@ -121,7 +121,7 @@
+ 					} else {			\
+ 						_proto_ = G_XIM_PROTOCOL (_p_);	\
+ 					}				\
+-					g_xim_message_debug(G_XIM_PROTOCOL_GET_IFACE (_p_)->message, "proxy/event", \
++					g_xim_messages_debug(G_XIM_PROTOCOL_GET_IFACE (_p_)->message, "proxy/event", \
+ 							    "Resending event %s queued for fake", \
+ 							    g_xim_protocol_name(_node_->data[0])); \
+ 					g_xim_protocol_send_packets(_proto_, \
+@@ -140,7 +140,7 @@
+ #define INC_PENDING_K(_p_)						\
+ 	G_STMT_START {							\
+ 		XIM_PROXY_CONNECTION (_p_)->n_pending_key_event++;	\
+-		g_xim_message_debug(G_XIM_PROTOCOL_GET_IFACE (_p_)->message, "proxy/task", \
++		g_xim_messages_debug(G_XIM_PROTOCOL_GET_IFACE (_p_)->message, "proxy/task", \
+ 				    "%s(++): %s pending forward event: %d", \
+ 				    __FUNCTION__,			\
+ 				    g_type_name(G_TYPE_FROM_INSTANCE (_p_)), \
+@@ -150,13 +150,13 @@
+ 	G_STMT_START {							\
+ 		if (XIM_PROXY_CONNECTION (_p_)->n_pending_key_event > 0) { \
+ 			XIM_PROXY_CONNECTION (_p_)->n_pending_key_event--; \
+-			g_xim_message_debug(G_XIM_PROTOCOL_GET_IFACE (_p_)->message, "proxy/task", \
++			g_xim_messages_debug(G_XIM_PROTOCOL_GET_IFACE (_p_)->message, "proxy/task", \
+ 					    "%s(--): %s pending forward event: %d", \
+ 					    __FUNCTION__,		\
+ 					    g_type_name(G_TYPE_FROM_INSTANCE (_p_)), \
+ 					    XIM_PROXY_CONNECTION (_p_)->n_pending_key_event); \
+ 		} else {						\
+-			g_xim_message_bug(G_XIM_PROTOCOL_GET_IFACE (_p_)->message, \
++			g_xim_messages_bug(G_XIM_PROTOCOL_GET_IFACE (_p_)->message, \
+ 					  "%s: The pending key event counter is underflowed", \
+ 					  __FUNCTION__);		\
+ 		}							\
+@@ -288,7 +288,7 @@
+ {
+ 	proxy->simid_table[cimid] = simid;
+ 	proxy->cimid_table[simid] = cimid;
+-	g_xim_message_debug(G_XIM_CORE (proxy)->message, "proxy/proto",
++	g_xim_messages_debug(G_XIM_CORE (proxy)->message, "proxy/proto",
+ 			    "imid link: %d <-> %d\n",
+ 			    simid, cimid);
+ }
+@@ -301,7 +301,7 @@
+ 
+ 	retval = proxy->simid_table[imid];
+ 	if (retval == 0) {
+-		g_xim_message_warning(G_XIM_CORE (proxy)->message,
++		g_xim_messages_warning(G_XIM_CORE (proxy)->message,
+ 				      "No links for imid %d", imid);
+ 
+ 		return 0;
+@@ -318,7 +318,7 @@
+ 
+ 	retval = proxy->cimid_table[imid];
+ 	if (retval == 0) {
+-		g_xim_message_warning(G_XIM_CORE (proxy)->message,
++		g_xim_messages_warning(G_XIM_CORE (proxy)->message,
+ 				      "No links for imid %d", imid);
+ 
+ 		return 0;
+@@ -396,7 +396,7 @@
+ 		    break;
+ 	    case RECONNECT_OP_FINISH:
+ 		    XIM_CLIENT_CONNECTION (conn)->is_reconnecting = FALSE;
+-		    g_xim_message_debug(G_XIM_CORE (proxy)->message, "proxy/event",
++		    g_xim_messages_debug(G_XIM_CORE (proxy)->message, "proxy/event",
+ 					"Reconnection finished");
+ 		    break;
+ 	    default:
+@@ -429,7 +429,7 @@
+ 	}
+ 	client = xim_client_new(dpy, real_server_name);
+ 	if (client == NULL) {
+-		g_xim_message_critical(core->message,
++		g_xim_messages_critical(core->message,
+ 				       "Unable to create a client instance.");
+ 		if (retried)
+ 			return NULL;
+@@ -442,7 +442,7 @@
+ 	g_signal_connect(client, "notify_transport",
+ 			 G_CALLBACK (xim_proxy_client_real_notify_transport_cb),
+ 			 proxy);
+-	g_xim_message_debug(core->message, "client/conn",
++	g_xim_messages_debug(core->message, "client/conn",
+ 			    "Inserting a client connection %p to the table with %p",
+ 			    client,
+ 			    G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+@@ -496,10 +496,10 @@
+ 		INC_PENDING_C (client, 0, _MN_XCONNECT, 0, 0);
+ 		if (!g_xim_cl_tmpl_connect_to_server(cltmpl, &error)) {
+ 			if (error) {
+-				g_xim_message_gerror(core->message, error);
++				g_xim_messages_gerror(core->message, error);
+ 				g_error_free(error);
+ 			} else {
+-				g_xim_message_warning(core->message,
++				g_xim_messages_warning(core->message,
+ 						      "Waiting for reconnecting on other thread.");
+ 			}
+ 			DEC_PENDING_C (client, 0, _MN_XCONNECT, 0, 0);
+@@ -514,7 +514,7 @@
+ 		g_hash_table_insert(proxy->sconn_table,
+ 				    G_XIM_NATIVE_WINDOW_TO_POINTER (client_window),
+ 				    proto);
+-		g_xim_message_debug(core->message, "proxy/event",
++		g_xim_messages_debug(core->message, "proxy/event",
+ 				    "%p-> XIM_XCONNECT [reconnect]",
+ 				    G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		G_XIM_CL_TMPL (client)->is_connection_initialized = GXC_NEGOTIATING;
+@@ -563,7 +563,7 @@
+ 	client_window = G_XIM_POINTER_TO_NATIVE_WINDOW (g_hash_table_lookup(proxy->selection_table,
+ 									    G_XIM_NATIVE_WINDOW_TO_POINTER (selection_window)));
+ 	if (client_window == 0) {
+-		g_xim_message_warning(core->message,
++		g_xim_messages_warning(core->message,
+ 				      "Received SelectionNotify from unknown sender: %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (selection_window));
+ 		goto end;
+@@ -578,14 +578,14 @@
+ 		s = g_strjoinv(",", locales);
+ 	prop = g_strdup_printf("@locale=%s", s);
+ 	g_free(s);
+-	g_xim_message_debug(core->message, "proxy/event",
++	g_xim_messages_debug(core->message, "proxy/event",
+ 			    "%p <-%p<- SelectionNotify[%s]",
+ 			    G_XIM_NATIVE_WINDOW_TO_POINTER (client_window),
+ 			    G_XIM_NATIVE_WINDOW_TO_POINTER (selection_window),
+ 			    prop);
+ 	retval = g_xim_srv_tmpl_send_selection_notify(G_XIM_SRV_TMPL (proxy), &ev, prop, strlen(prop) + 1, NULL);
+   end:
+-	g_xim_message_debug(core->message, "client/conn",
++	g_xim_messages_debug(core->message, "client/conn",
+ 			    "Removing a client connection from the table for %p",
+ 			    G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 	g_hash_table_remove(proxy->client_table,
+@@ -616,7 +616,7 @@
+ 	client_window = G_XIM_POINTER_TO_NATIVE_WINDOW (g_hash_table_lookup(proxy->selection_table,
+ 									    G_XIM_NATIVE_WINDOW_TO_POINTER (selection_window)));
+ 	if (client_window == 0) {
+-		g_xim_message_warning(core->message,
++		g_xim_messages_warning(core->message,
+ 				      "Received SelectionNotify from unknown sender: %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (selection_window));
+ 		goto end;
+@@ -631,14 +631,14 @@
+ 		s = g_strjoinv(",", transport);
+ 	prop = g_strdup_printf("@transport=%s", s);
+ 	g_free(s);
+-	g_xim_message_debug(core->message, "proxy/event",
++	g_xim_messages_debug(core->message, "proxy/event",
+ 			    "%p <-%p<- SelectionNotify[%s]",
+ 			    G_XIM_NATIVE_WINDOW_TO_POINTER (client_window),
+ 			    G_XIM_NATIVE_WINDOW_TO_POINTER (selection_window),
+ 			    prop);
+ 	retval = g_xim_srv_tmpl_send_selection_notify(G_XIM_SRV_TMPL (proxy), &ev, prop, strlen(prop) + 1, NULL);
+   end:
+-	g_xim_message_debug(core->message, "client/conn",
++	g_xim_messages_debug(core->message, "client/conn",
+ 			    "Removing a client connection from the table for %p",
+ 			    G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 	g_hash_table_remove(proxy->client_table,
+@@ -668,14 +668,14 @@
+ 	comm_window = G_XIM_POINTER_TO_NATIVE_WINDOW (g_hash_table_lookup(proxy->comm_table,
+ 									  G_XIM_NATIVE_WINDOW_TO_POINTER (nw)));
+ 	if (comm_window == 0) {
+-		g_xim_message_warning(core->message,
++		g_xim_messages_warning(core->message,
+ 				      "Got a response of XIM_XCONNECT for unknown client: %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (nw));
+ 		return TRUE;
+ 	}
+ 	sconn = g_xim_srv_tmpl_lookup_connection_with_native_window(G_XIM_SRV_TMPL (proxy), comm_window);
+ 	if (sconn == NULL) {
+-		g_xim_message_warning(core->message,
++		g_xim_messages_warning(core->message,
+ 				      "No connection %p for a response of XIM_XCONNECT",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (comm_window));
+ 		return TRUE;
+@@ -694,7 +694,7 @@
+ 					     g_xim_transport_get_atom(ctrans));
+ 
+ 	if (XIM_CLIENT (client)->is_reconnecting) {
+-		g_xim_message_debug(core->message, "proxy/event",
++		g_xim_messages_debug(core->message, "proxy/event",
+ 				    "%p<- XIM_XCONNECT[%p] [reconnected]",
+ 				    G_XIM_NATIVE_WINDOW_TO_POINTER (nw),
+ 				    G_XIM_NATIVE_WINDOW_TO_POINTER (event->data.l[0]));
+@@ -709,7 +709,7 @@
+ 		ev->client.data.l[2] = event->data.l[2];
+ 		ev->client.data.l[3] = event->data.l[3];
+ 
+-		g_xim_message_debug(core->message, "proxy/event",
++		g_xim_messages_debug(core->message, "proxy/event",
+ 				    "%p <-%p<- XIM_XCONNECT[%p]",
+ 				    G_XIM_NATIVE_WINDOW_TO_POINTER (comm_window),
+ 				    G_XIM_NATIVE_WINDOW_TO_POINTER (nw),
+@@ -796,7 +796,7 @@
+ 		retval = g_xim_connection_cmd_error(G_XIM_CONNECTION (conn), imid, icid, flag,
+ 						    G_XIM_ERR_BadProtocol, 0, msg);
+ 	}
+-	g_xim_message_error(G_XIM_PROTOCOL_GET_IFACE (proto)->message, "%s", msg);
++	g_xim_messages_error(G_XIM_PROTOCOL_GET_IFACE (proto)->message, "%s", msg);
+ 	g_free(msg);
+ 
+ 	return retval;
+@@ -930,7 +930,7 @@
+ 
+ 			id = g_xim_attr_get_attribute_id(attr, l->data);
+ 			if (id == -1) {
+-				g_xim_message_warning(G_XIM_CORE (proxy)->message,
++				g_xim_messages_warning(G_XIM_CORE (proxy)->message,
+ 						      "Unknown IM attribute %s: no attribute id in the XIM server side is assigned.",
+ 						      (gchar *)l->data);
+ 				continue;
+@@ -938,7 +938,7 @@
+ 			gtype = g_xim_attr_get_gtype_by_name(attr, l->data);
+ 			vtype = g_xim_gtype_to_value_type(gtype);
+ 			if (vtype == G_XIM_TYPE_INVALID) {
+-				g_xim_message_bug(G_XIM_CORE (proxy)->message,
++				g_xim_messages_bug(G_XIM_CORE (proxy)->message,
+ 						  "Unable to compose a XIMATTR for %s",
+ 						  (gchar *)l->data);
+ 				continue;
+@@ -948,7 +948,7 @@
+ 			 */
+ 			sid = g_xim_attr_get_attribute_id(G_XIM_ATTR (sc->imattr), l->data);
+ 			if (sid == -1) {
+-				g_xim_message_warning(G_XIM_CORE (proxy)->message,
++				g_xim_messages_warning(G_XIM_CORE (proxy)->message,
+ 						      "Unknown IM attribute %s: no attribute id in the client side is assigned.",
+ 						      (gchar *)l->data);
+ 				continue;
+@@ -964,7 +964,7 @@
+ 			raw = g_xim_raw_attr_new_with_value(id, s, vtype);
+ 			imlist = g_slist_append(imlist, raw);
+ 
+-			g_xim_message_debug(G_XIM_CORE (proxy)->message, "proxy/proto",
++			g_xim_messages_debug(G_XIM_CORE (proxy)->message, "proxy/proto",
+ 					    "IM Attribute link %s: %d <-> %d",
+ 					    s->str, sid, id);
+ 		}
+@@ -983,7 +983,7 @@
+ 
+ 			id = g_xim_attr_get_attribute_id(attr, l->data);
+ 			if (id == -1) {
+-				g_xim_message_warning(G_XIM_CORE (proxy)->message,
++				g_xim_messages_warning(G_XIM_CORE (proxy)->message,
+ 						      "Unknown IC attribute %s: no attribute id in the XIM server side is assigned.",
+ 						      (gchar *)l->data);
+ 				continue;
+@@ -991,7 +991,7 @@
+ 			gtype = g_xim_attr_get_gtype_by_name(attr, l->data);
+ 			vtype = g_xim_gtype_to_value_type(gtype);
+ 			if (vtype == G_XIM_TYPE_INVALID) {
+-				g_xim_message_bug(G_XIM_CORE (proxy)->message,
++				g_xim_messages_bug(G_XIM_CORE (proxy)->message,
+ 						  "Unable to compose a XICATTR for %s",
+ 						  (gchar *)l->data);
+ 				continue;
+@@ -1001,7 +1001,7 @@
+ 			 */
+ 			sid = g_xim_attr_get_attribute_id(G_XIM_ATTR (sc->default_icattr), l->data);
+ 			if (sid == -1) {
+-				g_xim_message_warning(G_XIM_CORE (proxy)->message,
++				g_xim_messages_warning(G_XIM_CORE (proxy)->message,
+ 						      "Unknown IC attribute %s: no attribute id in the client side is assigned.",
+ 						      (gchar *)l->data);
+ 				continue;
+@@ -1017,7 +1017,7 @@
+ 			raw = g_xim_raw_attr_new_with_value(id, s, vtype);
+ 			iclist = g_slist_append(iclist, raw);
+ 
+-			g_xim_message_debug(G_XIM_CORE (proxy)->message, "proxy/proto",
++			g_xim_messages_debug(G_XIM_CORE (proxy)->message, "proxy/proto",
+ 					    "IC Attribute link %s: %d <-> %d",
+ 					    s->str, sid, id);
+ 		}
+@@ -1169,7 +1169,7 @@
+ 						  G_XIM_CONNECTION (conn)->encoding_index);
+ 			e2 = g_xim_encodinginfo_get_string(g_value_get_boxed(v));
+ 		}
+-		g_xim_message_debug(G_XIM_CORE (proxy)->message, "proxy/proto",
++		g_xim_messages_debug(G_XIM_CORE (proxy)->message, "proxy/proto",
+ 				    "Encoding link: %s <-> %s",
+ 				    e2, e1);
+ 		_reconnect(proxy, G_XIM_CLIENT_CONNECTION (proto));
+@@ -1255,7 +1255,7 @@
+ 		/* assertion here is highly unlikely */
+ 		g_return_val_if_fail(name != NULL, FALSE);
+ 		if ((id = GPOINTER_TO_UINT (g_hash_table_lookup(proxy->simattr_table, name))) == 0) {
+-			g_xim_message_warning(G_XIM_CORE (proxy)->message,
++			g_xim_messages_warning(G_XIM_CORE (proxy)->message,
+ 					      "Unknown IM attribute %s: XIM server assigned it to id %d",
+ 					      name, orig->id);
+ 		} else {
+@@ -1297,7 +1297,7 @@
+ 
+ 	if (g_hash_table_lookup(XIM_PROXY_CONNECTION (conn)->ic_table,
+ 				GUINT_TO_POINTER ((guint)icid)) != NULL) {
+-		g_xim_message_bug(G_XIM_CORE (proxy)->message,
++		g_xim_messages_bug(G_XIM_CORE (proxy)->message,
+ 				  "Input-Context ID %d wasn't somehow closed properly. discarding old data",
+ 				  icid);
+ 	}
+@@ -1371,7 +1371,7 @@
+ 		g_free(node->data);
+ 		g_free(node);
+ 		retval = TRUE;
+-		g_xim_message_debug(G_XIM_PROTOCOL_GET_IFACE (proto)->message, "proxy/event",
++		g_xim_messages_debug(G_XIM_PROTOCOL_GET_IFACE (proto)->message, "proxy/event",
+ 				    "Discarding the event %s. the number of queue: %d",
+ 				    g_xim_protocol_name(req->major_opcode),
+ 				    g_queue_get_length(priv->sendq));
+@@ -1411,7 +1411,7 @@
+ 		/* assertion here is highly unlikely */
+ 		g_return_val_if_fail(name != NULL, FALSE);
+ 		if ((id = GPOINTER_TO_UINT (g_hash_table_lookup(proxy->sicattr_table, name))) == 0) {
+-			g_xim_message_warning(G_XIM_CORE (proxy)->message,
++			g_xim_messages_warning(G_XIM_CORE (proxy)->message,
+ 					      "Unknown IC attribute %s: XIM server assigned it to id %d",
+ 					      name, orig->id);
+ 		} else {
+@@ -1706,14 +1706,14 @@
+ 		dpy = g_xim_core_get_display(core);
+ 		proxy->default_server = G_XIM_SRV_TMPL (xim_loopback_new(dpy));
+ 		if (proxy->default_server == NULL) {
+-			g_xim_message_critical(core->message,
++			g_xim_messages_critical(core->message,
+ 					       "Unable to create a default server instance.");
+ 			goto end;
+ 		}
+ 		if (!g_xim_srv_tmpl_take_ownership(proxy->default_server,
+ 						   TRUE,
+ 						   &error)) {
+-			g_xim_message_gerror(core->message, error);
++			g_xim_messages_gerror(core->message, error);
+ 			g_error_free(error);
+ 			goto end;
+ 		}
+@@ -1744,7 +1744,7 @@
+ 		    break;
+ 	    case PROP_CLIENT_PROTO_SIGNALS:
+ 		    if (proxy->client_proto_signals != NULL) {
+-			    g_xim_message_warning(G_XIM_CORE (object)->message,
++			    g_xim_messages_warning(G_XIM_CORE (object)->message,
+ 						  "Unable to update the signal list.");
+ 			    break;
+ 		    }
+@@ -1862,7 +1862,7 @@
+ 		return FALSE;
+ 	nw = GDK_WINDOW_XID (g_xim_core_get_selection_window(G_XIM_CORE (client)));
+ 	s = gdk_atom_name(event->property);
+-	g_xim_message_debug(core->message, "proxy/event",
++	g_xim_messages_debug(core->message, "proxy/event",
+ 			    "%p ->%p-> SelectionRequest[%s]",
+ 			    G_XIM_NATIVE_WINDOW_TO_POINTER (event->requestor),
+ 			    G_XIM_NATIVE_WINDOW_TO_POINTER (nw),
+@@ -1872,7 +1872,7 @@
+ 		if (!g_xim_cl_tmpl_send_selection_request(G_XIM_CL_TMPL (client),
+ 							  core->atom_locales,
+ 							  &error)) {
+-			g_xim_message_error(core->message,
++			g_xim_messages_error(core->message,
+ 					    "Unable to get the supported locales from the server `%s': %s",
+ 					    G_XIM_SRV_TMPL (proxy)->server_name,
+ 					    error->message);
+@@ -1890,7 +1890,7 @@
+ 		if (!g_xim_cl_tmpl_send_selection_request(G_XIM_CL_TMPL (client),
+ 							  core->atom_transport,
+ 							  &error)) {
+-			g_xim_message_error(core->message,
++			g_xim_messages_error(core->message,
+ 					    "Unable to get the supported transport from the server `%s': %s",
+ 					    G_XIM_SRV_TMPL (proxy)->server_name,
+ 					    error->message);
+@@ -1907,7 +1907,7 @@
+ 	} else {
+ 		gchar *s = gdk_atom_name(event->property);
+ 
+-		g_xim_message_warning(core->message,
++		g_xim_messages_warning(core->message,
+ 				      "%s: Unknown/unsupported Property received: %s",
+ 				      __FUNCTION__, s);
+ 		g_free(s);
+@@ -1943,7 +1943,7 @@
+ 
+ 	nw = g_xim_transport_get_native_channel(G_XIM_TRANSPORT (object));
+ 	if (nw) {
+-		g_xim_message_debug(core->message, "server/conn",
++		g_xim_messages_debug(core->message, "server/conn",
+ 				    "Removing a connection from the table for %p",
+ 				    G_XIM_NATIVE_WINDOW_TO_POINTER (nw));
+ 		w = g_xim_get_window(dpy, nw);
+@@ -1953,7 +1953,7 @@
+ 	}
+ 	nw = g_xim_transport_get_client_window(G_XIM_TRANSPORT (object));
+ 	if (nw) {
+-		g_xim_message_debug(core->message, "server/conn",
++		g_xim_messages_debug(core->message, "server/conn",
+ 				    "Removing a connection from the table for %p",
+ 				    G_XIM_NATIVE_WINDOW_TO_POINTER (nw));
+ 		w = g_xim_get_window(dpy, nw);
+@@ -1962,7 +1962,7 @@
+ 				    G_XIM_NATIVE_WINDOW_TO_POINTER (nw));
+ 		g_hash_table_remove(XIM_PROXY (server)->sconn_table,
+ 				    G_XIM_NATIVE_WINDOW_TO_POINTER (nw));
+-		g_xim_message_debug(core->message, "client/conn",
++		g_xim_messages_debug(core->message, "client/conn",
+ 				    "Removing a client connection from the table for %p",
+ 				    G_XIM_NATIVE_WINDOW_TO_POINTER (nw));
+ 		client = g_hash_table_lookup(XIM_PROXY (server)->client_table,
+@@ -1980,12 +1980,12 @@
+ 					    G_XIM_NATIVE_WINDOW_TO_POINTER (comm_window));
+ 		}
+ 	}
+-	g_xim_message_debug(core->message, "proxy/conn",
++	g_xim_messages_debug(core->message, "proxy/conn",
+ 			    "live server connection: %d [%d][%d]\n",
+ 			    g_hash_table_size(server->conn_table),
+ 			    g_hash_table_size(XIM_PROXY (server)->sconn_table),
+ 			    g_hash_table_size(XIM_PROXY (server)->comm_table));
+-	g_xim_message_debug(core->message, "proxy/conn",
++	g_xim_messages_debug(core->message, "proxy/conn",
+ 			    "live client connection: %d\n",
+ 			    g_hash_table_size(XIM_PROXY (server)->client_table));
+ }
+@@ -2005,7 +2005,7 @@
+ 	GError *error = NULL;
+ 
+ 	if (conn) {
+-		g_xim_message_warning(core->message,
++		g_xim_messages_warning(core->message,
+ 				      "Received XIM_XCONNECT event from %p again: duplicate connection",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (w));
+ 		g_object_ref(conn);
+@@ -2013,7 +2013,7 @@
+ 	}
+ 	gtype = g_xim_core_get_connection_gtype(core);
+ 	if (!g_type_is_a(gtype, G_TYPE_XIM_CONNECTION)) {
+-		g_xim_message_bug(core->message,
++		g_xim_messages_bug(core->message,
+ 				  "given GObject type isn't inherited from GXimConnection");
+ 		return NULL;
+ 	}
+@@ -2040,7 +2040,7 @@
+   client_proc:
+ 	if ((client = g_hash_table_lookup(proxy->client_table,
+ 					  G_XIM_NATIVE_WINDOW_TO_POINTER (w)))) {
+-		g_xim_message_warning(core->message,
++		g_xim_messages_warning(core->message,
+ 				      "Received XIM_XCONNECT event from %p again: duplicate client",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (w));
+ 		/* XXX: ignore it so far */
+@@ -2056,7 +2056,7 @@
+ 	}
+ 
+ 	if (!g_xim_cl_tmpl_connect_to_server(G_XIM_CL_TMPL (client), &error)) {
+-		g_xim_message_gerror(core->message, error);
++		g_xim_messages_gerror(core->message, error);
+ 		g_error_free(error);
+ 
+ 		return NULL;
+@@ -2071,7 +2071,7 @@
+ 	g_hash_table_insert(proxy->sconn_table,
+ 			    G_XIM_NATIVE_WINDOW_TO_POINTER (w),
+ 			    conn);
+-	g_xim_message_debug(core->message, "proxy/event",
++	g_xim_messages_debug(core->message, "proxy/event",
+ 			    "%p ->%p-> XIM_XCONNECT",
+ 			    G_XIM_NATIVE_WINDOW_TO_POINTER (w),
+ 			    G_XIM_NATIVE_WINDOW_TO_POINTER (comm_window));
+@@ -2097,7 +2097,7 @@
+ 						 minor_version,
+ 						 (GSList *)list,
+ 						 TRUE)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_CONNECT for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+@@ -2122,7 +2122,7 @@
+ 	g_object_ref(conn);
+ 
+ 	if (!g_xim_client_connection_cmd_disconnect(conn, TRUE)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_DISCONNECT for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+@@ -2141,7 +2141,7 @@
+ 	GdkNativeWindow	client_window = g_xim_transport_get_client_window(G_XIM_TRANSPORT (proto));
+ 
+ 	if (!g_xim_connection_cmd_auth_ng(G_XIM_CONNECTION (conn))) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_AUTH_NG for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+@@ -2169,7 +2169,7 @@
+ 		return FALSE;
+ 
+ 	if (!g_xim_connection_cmd_error(G_XIM_CONNECTION (conn), cimid, icid, flag, error_code, detail, error_message)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_ERROR for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+@@ -2193,7 +2193,7 @@
+ 	if (!g_xim_client_connection_cmd_open_im(conn,
+ 						 locale,
+ 						 TRUE)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_OPEN for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+@@ -2217,7 +2217,7 @@
+ 		return FALSE;
+ 
+ 	if (!g_xim_client_connection_cmd_close_im(conn, cimid, TRUE)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_CLOSE for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+@@ -2254,7 +2254,7 @@
+ 		goto error;
+ 
+ 	if (!g_xim_client_connection_cmd_trigger_notify(conn, cimid, icid, flag, index_, event_mask, TRUE)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_TRIGGER_NOTIFY for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+@@ -2305,7 +2305,7 @@
+ 		g_value_array_append(c->encoding_details, &v);
+ 	}
+ 	if (!g_xim_client_connection_cmd_encoding_negotiation(conn, cimid, encodings, details, TRUE)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_ENCODING_NEGOTIATION for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+@@ -2330,7 +2330,7 @@
+ 		return FALSE;
+ 
+ 	if (!g_xim_client_connection_cmd_query_extension(conn, cimid, extensions, TRUE)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_QUERY_EXTENSION for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+@@ -2364,11 +2364,11 @@
+ 		/* assertion here is highly unlikely */
+ 		g_return_val_if_fail (name != NULL, FALSE);
+ 		if ((id = GPOINTER_TO_UINT (g_hash_table_lookup(proxy->cimattr_table, name))) == 0) {
+-			g_xim_message_warning(G_XIM_CORE (proxy)->message,
++			g_xim_messages_warning(G_XIM_CORE (proxy)->message,
+ 					      "Unknown IM attribute id %d [%s]",
+ 					      orig->id, name);
+ 		} else {
+-			g_xim_message_debug(G_XIM_CORE (proxy)->message, "proxy/proto",
++			g_xim_messages_debug(G_XIM_CORE (proxy)->message, "proxy/proto",
+ 					    "IM Attribute %d->%d: %s",
+ 					    orig->id, id - 1, name);
+ 			a = g_xim_attribute_copy(l->data);
+@@ -2378,7 +2378,7 @@
+ 		g_free(name);
+ 	}
+ 	if (!g_xim_client_connection_cmd_set_im_values(conn, cimid, alt, TRUE)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_SET_IM_VALUES for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+@@ -2418,7 +2418,7 @@
+ 		g_return_val_if_fail (name != NULL, FALSE);
+ 		sid = GPOINTER_TO_UINT (g_hash_table_lookup(proxy->cimattr_table, name));
+ 		if (sid == 0) {
+-			g_xim_message_warning(G_XIM_CORE (proxy)->message,
++			g_xim_messages_warning(G_XIM_CORE (proxy)->message,
+ 					      "Unknown IM attribute id %d [%s]",
+ 					      id, name);
+ 		} else {
+@@ -2427,7 +2427,7 @@
+ 		g_free(name);
+ 	}
+ 	if (!g_xim_client_connection_cmd_get_im_values(conn, cimid, alt, TRUE)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_GET_IM_VALUES for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+@@ -2463,11 +2463,11 @@
+ 		/* assertion here is highly unlikely */
+ 		g_return_val_if_fail (name != NULL, FALSE);
+ 		if ((id = GPOINTER_TO_UINT (g_hash_table_lookup(proxy->cicattr_table, name))) == 0) {
+-			g_xim_message_warning(G_XIM_CORE (proxy)->message,
++			g_xim_messages_warning(G_XIM_CORE (proxy)->message,
+ 					      "Unknown IC attribute id %d [%s]",
+ 					      orig->id, name);
+ 		} else {
+-			g_xim_message_debug(G_XIM_CORE (proxy)->message, "proxy/proto",
++			g_xim_messages_debug(G_XIM_CORE (proxy)->message, "proxy/proto",
+ 					    "IC Attribute %d->%d: %s",
+ 					    orig->id, id - 1, name);
+ 			a = g_xim_attribute_copy(l->data);
+@@ -2477,7 +2477,7 @@
+ 		g_free(name);
+ 	}
+ 	if (!g_xim_client_connection_cmd_create_ic(conn, cimid, alt, TRUE)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_CREATE_IC for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+@@ -2516,7 +2516,7 @@
+ 		goto error;
+ 
+ 	if (!g_xim_client_connection_cmd_destroy_ic(conn, cimid, icid, TRUE)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_DESTROY_IC for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+@@ -2567,7 +2567,7 @@
+ 		/* assertion here is highly unlikely */
+ 		g_return_val_if_fail(name != NULL, FALSE);
+ 		if ((id = GPOINTER_TO_UINT (g_hash_table_lookup(proxy->cicattr_table, name))) == 0) {
+-			g_xim_message_warning(G_XIM_CORE (proxy)->message,
++			g_xim_messages_warning(G_XIM_CORE (proxy)->message,
+ 					      "Unknown IC attribute id %d [%s]",
+ 					      orig->id, name);
+ 		} else {
+@@ -2591,7 +2591,7 @@
+ 	}
+ 	g_free(rep);
+ 	if (!g_xim_client_connection_cmd_set_ic_values(conn, cimid, icid, alt, TRUE)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_SET_IC_VALUES for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		g_xim_protocol_cancel_queue(G_XIM_PROTOCOL (conn));
+@@ -2659,19 +2659,19 @@
+ 		g_return_val_if_fail (name != NULL, FALSE);
+ 		sid = GPOINTER_TO_UINT (g_hash_table_lookup(proxy->cicattr_table, name));
+ 		if (sid == 0) {
+-			g_xim_message_warning(G_XIM_CORE (proxy)->message,
++			g_xim_messages_warning(G_XIM_CORE (proxy)->message,
+ 					      "Unknown IC attribute id %d [%s]",
+ 					      id, name);
+ 		} else {
+ 			alt = g_slist_append(alt, GUINT_TO_POINTER (sid - 1));
+ 		}
+-		g_xim_message_debug(G_XIM_CORE (proxy)->message, "proxy/proto",
++		g_xim_messages_debug(G_XIM_CORE (proxy)->message, "proxy/proto",
+ 				    "IC Attribute %d->%d: %s",
+ 				    id, sid - 1, name);
+ 		g_free(name);
+ 	}
+ 	if (!g_xim_client_connection_cmd_get_ic_values(conn, cimid, icid, alt, TRUE)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_GET_IC_VALUES for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+@@ -2705,7 +2705,7 @@
+ 
+ 	conn = _get_client_connection(proxy, proto);
+ 	if (!g_xim_client_connection_cmd_set_ic_focus(conn, cimid, icid)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_SET_IC_FOCUS for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+@@ -2733,7 +2733,7 @@
+ 
+ 	conn = _get_client_connection(proxy, proto);
+ 	if (!g_xim_client_connection_cmd_unset_ic_focus(conn, cimid, icid)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_UNSET_IC_FOCUS for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+@@ -2768,7 +2768,7 @@
+ 		return FALSE;
+ 
+ 	if (!g_xim_connection_cmd_forward_event(G_XIM_CONNECTION (conn), cimid, icid, flag, event)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_FORWARD_EVENT for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		if (flag & G_XIM_Event_Synchronous)
+@@ -2813,7 +2813,7 @@
+ 		goto error;
+ 
+ 	if (!g_xim_client_connection_cmd_sync(conn, cimid, icid, TRUE)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_SYNC for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+@@ -2841,7 +2841,7 @@
+ 		goto end;
+ 
+ 	if (!(retval = g_xim_connection_cmd_sync_reply(conn, cimid, icid))) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_SYNC_REPLY for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 	}
+@@ -2875,7 +2875,7 @@
+ 		goto error;
+ 
+ 	if (!g_xim_client_connection_cmd_reset_ic(conn, cimid, icid, TRUE)) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_RESET_IC for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 		return FALSE;
+@@ -2905,7 +2905,7 @@
+ 		goto end;
+ 
+ 	if (!(retval = g_xim_client_connection_cmd_preedit_start_reply(conn, cimid, icid, return_value))) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_PREEDIT_START_REPLY for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 	}
+@@ -2932,7 +2932,7 @@
+ 		goto end;
+ 
+ 	if (!(retval = g_xim_client_connection_cmd_preedit_caret_reply(conn, cimid, icid, position))) {
+-		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
++		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+ 				      "Unable to deliver XIM_PREEDIT_CARET_REPLY for %p",
+ 				      G_XIM_NATIVE_WINDOW_TO_POINTER (client_window));
+ 	}
+--- imsettings-1.5.0/backends/xim/main.c.orig	2012-11-22 09:49:14.000000000 +0100
++++ imsettings-1.5.0/backends/xim/main.c	2012-11-25 19:04:39.531757441 +0100
+@@ -28,7 +28,7 @@
+ #include <locale.h>
+ #include <stdlib.h>
+ #include <glib/gi18n.h>
+-#include <libgxim/gximmessage.h>
++#include <libgxim/gximmessages.h>
+ #include <libgxim/gximmisc.h>
+ #include "imsettings.h"
+ #include "imsettings-client.h"
+@@ -126,7 +126,7 @@
+ 		const gchar *im;
+ 
+ 		g_variant_get(parameters, "(&s)", &im);
+-		g_xim_message_debug(G_XIM_CORE (proxy->proxy)->message, "dbus/event",
++		g_xim_messages_debug(G_XIM_CORE (proxy->proxy)->message, "dbus/event",
+ 				    "Changing XIM server: '%s'->'%s'\n",
+ 				    proxy->xim_name, im);
+ 		g_free(proxy->xim_name);
