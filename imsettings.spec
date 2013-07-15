@@ -16,7 +16,6 @@ Source0:	https://bitbucket.org/tagoh/%{name}/downloads/%{name}-%{version}.tar.bz
 Patch0:		%{name}-constraint-of-language.patch
 Patch1:		%{name}-no-bash.patch
 Patch2:		%{name}-format-security.patch
-Patch3:		%{name}-gxim.patch
 URL:		https://tagoh.bitbucket.org/imsettings/
 BuildRequires:	GConf2-devel >= 2.0
 BuildRequires:	dbus-devel
