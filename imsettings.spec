@@ -6,18 +6,18 @@
 Summary:	Delivery framework for general Input Method configuration
 Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
-Version:	1.5.0
+Version:	1.6.3
 Release:	1
 License:	LGPL v2+
 Group:		Applications/System
 #Source0Download: http://code.google.com/p/imsettings/downloads/list
-Source0:	http://imsettings.googlecode.com/files/%{name}-%{version}.tar.bz2
-# Source0-md5:	31db79221b3b2a64ed9a07dc96abd540
+Source0:	https://bitbucket.org/tagoh/%{name}/downloads/%{name}-%{version}.tar.bz2
+# Source0-md5:	1a2253f548f7da6ff1211d01e48a8b98
 Patch0:		%{name}-constraint-of-language.patch
 Patch1:		%{name}-no-bash.patch
 Patch2:		%{name}-format-security.patch
 Patch3:		%{name}-gxim.patch
-URL:		http://code.google.com/p/imsettings/
+URL:		https://tagoh.bitbucket.org/imsettings/
 BuildRequires:	GConf2-devel >= 2.0
 BuildRequires:	dbus-devel
 BuildRequires:	desktop-file-utils
@@ -28,7 +28,7 @@ BuildRequires:	gobject-introspection-devel >= 1.30.0
 BuildRequires:	gtk+2-devel >= 2:2.24.11
 BuildRequires:	gtk+3-devel >= 3.3.3
 BuildRequires:	gtk-doc >= 1.0
-BuildRequires:	libgxim-devel >= 0.4.0
+BuildRequires:	libgxim-devel >= 0.5.0
 BuildRequires:	libnotify-devel >= 0.7.0
 %{?with_mate:BuildRequires:	mate-conf-devel}
 BuildRequires:	pkgconfig
@@ -267,7 +267,6 @@ Ten pakiet zawiera moduł umożliwiający to dla aplikacji LXDE.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
 %build
 %configure \
@@ -309,11 +308,15 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/imsettings-switch
 
 %dir %{_libdir}/%{name}
+%{_libdir}/imsettings-functions
 %attr(755,root,root) %{_libdir}/imsettings-check
 %attr(755,root,root) %{_libdir}/imsettings-daemon
 %attr(755,root,root) %{_libdir}/xinputinfo.sh
+%attr(755,root,root) %{_libdir}/imsettings-target-checker.sh
 %{_datadir}/dbus-1/services/imsettings-daemon.service
 %{_pixmapsdir}/imsettings-unknown.png
+
+%{_mandir}/man1/imsettings-*.1*
 
 %files libs
 %defattr(644,root,root,755)

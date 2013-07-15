@@ -1,11 +1,5 @@
---- imsettings-1.5.0/data/xinput.sh.in.in.orig	2012-11-25 18:33:02.248463652 +0100
-+++ imsettings-1.5.0/data/xinput.sh.in.in	2012-11-25 18:47:20.531779098 +0100
-@@ -1,4 +1,4 @@
--#!/bin/bash
-+#!/bin/sh
- # Copyright (C) 1999-2004,2007-2011 Red Hat, Inc. All rights reserved. This
- # copyrighted material is made available to anyone wishing to use, modify,
- # copy, or redistribute it subject to the terms and conditions of the
+--- imsettings-1.5.0/data/imsettings-functions.in.orig	2012-11-25 18:33:02.248463652 +0100
++++ imsettings-1.5.0/data/imsettings-functions.in	2012-11-25 18:47:20.531779098 +0100
 @@ -11,7 +11,7 @@
  #
  # X Input method setup script
@@ -148,6 +142,14 @@
      log "imsettings information"
      log "=========================="
      log "XINPUTRC: $READ_XINPUTRC"
+--- imsettings-1.5.0/data/xinput.sh.in.in.orig	2012-11-25 18:33:02.248463652 +0100
++++ imsettings-1.5.0/data/xinput.sh.in.in	2012-11-25 18:47:20.531779098 +0100
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/bin/sh
+ # Copyright (C) 1999-2004,2007-2011 Red Hat, Inc. All rights reserved. This
+ # copyrighted material is made available to anyone wishing to use, modify,
+ # copy, or redistribute it subject to the terms and conditions of the
 @@ -257,13 +257,13 @@
  unset TERM
  if [ -r /etc/profile.d/lang.sh ]; then
@@ -255,3 +257,11 @@
  	IMSETTINGS_FILENAME=$SYS_XINPUTRC
      fi
  fi
+--- imsettings-1.6.3/data/imsettings-target-checker.sh.in~	2013-05-27 05:39:15.000000000 +0200
++++ imsettings-1.6.3/data/imsettings-target-checker.sh.in	2013-07-15 08:12:17.339869611 +0200
+@@ -1,4 +1,4 @@
+-#! /bin/bash
++#!/bin/sh
+ # imsettings-target-checker.sh
+ # Copyright (C) 2013 Akira TAGOH
+ #

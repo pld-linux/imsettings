@@ -88,14 +88,23 @@
  		return FALSE;
  	}
 @@ -750,7 +750,7 @@
- 			} else if (match) {
- 				g_set_error(error, IMSETTINGS_GERROR, IMSETTINGS_GERROR_NOT_TARGETED_DESKTOP,
- 						    _("Current desktop isn't targeted by Input Method."));
--				g_warning((*error)->message);
-+				g_warning("%s", (*error)->message);
- 				g_strfreev(list);
+ 	} else if (match) {
+ 		g_set_error(error, IMSETTINGS_GERROR, IMSETTINGS_GERROR_NOT_TARGETED_DESKTOP,
+ 			    _("Current desktop isn't targeted by IMSettings."));
+-		g_warning((*error)->message);
++		g_warning("%s", (*error)->message);
  
- 				return FALSE;
+ 		return FALSE;
+ 	}
+@@ -1222,7 +1222,7 @@
+ 		g_dbus_method_invocation_return_error(invocation,
+ 						      IMSETTINGS_GERROR,
+ 						      err->code,
+-						      err->message);
++						      "%s", err->message);
+ 		g_error_free(err);
+ 	} else {
+ 		if (value) {
 --- imsettings-1.4.0/backends/lxde/lxde-module.c~	2012-04-23 10:28:00.000000000 +0200
 +++ imsettings-1.4.0/backends/lxde/lxde-module.c	2012-11-12 21:54:41.767948722 +0100
 @@ -176,7 +176,7 @@
@@ -112,27 +121,27 @@
 @@ -774,7 +774,7 @@
  		gboolean retval;
  
- 		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
--				      msg);
-+				      "%s", msg);
+ 		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+-				       msg);
++				       "%s", msg);
  		retval = g_xim_connection_cmd_error(G_XIM_CONNECTION (proto),
  						    imid, icid, G_XIM_EMASK_VALID_IMID | G_XIM_EMASK_VALID_ICID,
  						    G_XIM_ERR_BadProtocol,
 @@ -804,7 +804,7 @@
  		gboolean retval;
  
- 		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
--				      msg);
-+				      "%s", msg);
+ 		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+-				       msg);
++				       "%s", msg);
  		retval = g_xim_connection_cmd_error(G_XIM_CONNECTION (proto),
  						    imid, icid, G_XIM_EMASK_VALID_IMID | G_XIM_EMASK_VALID_ICID,
  						    G_XIM_ERR_BadProtocol,
 @@ -845,7 +845,7 @@
  		gboolean retval;
  
- 		g_xim_message_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
--				      msg);
-+				      "%s", msg);
+ 		g_xim_messages_warning(G_XIM_PROTOCOL_GET_IFACE (proto)->message,
+-				       msg);
++				       "%s", msg);
  		retval = g_xim_connection_cmd_error(G_XIM_CONNECTION (proto),
  						    imid, icid, G_XIM_EMASK_VALID_IMID | G_XIM_EMASK_VALID_ICID,
  						    G_XIM_ERR_BadProtocol,
@@ -142,8 +151,8 @@
  		retval = g_xim_connection_cmd_error(G_XIM_CONNECTION (conn), imid, icid, flag,
  						    G_XIM_ERR_BadProtocol, 0, msg);
  	}
--	g_xim_message_error(G_XIM_PROTOCOL_GET_IFACE (proto)->message, msg);
-+	g_xim_message_error(G_XIM_PROTOCOL_GET_IFACE (proto)->message, "%s", msg);
+-	g_xim_messages_error(G_XIM_PROTOCOL_GET_IFACE (proto)->message, msg);
++	g_xim_messages_error(G_XIM_PROTOCOL_GET_IFACE (proto)->message, "%s", msg);
  	g_free(msg);
  
  	return retval;
