@@ -10,8 +10,7 @@ Version:	1.6.3
 Release:	1
 License:	LGPL v2+
 Group:		Applications/System
-#Source0Download: http://code.google.com/p/imsettings/downloads/list
-Source0:	https://bitbucket.org/tagoh/%{name}/downloads/%{name}-%{version}.tar.bz2
+Source0:	https://bitbucket.org/tagoh/imsettings/downloads/%{name}-%{version}.tar.bz2
 # Source0-md5:	1a2253f548f7da6ff1211d01e48a8b98
 Patch0:		%{name}-constraint-of-language.patch
 Patch1:		%{name}-no-bash.patch
@@ -98,7 +97,7 @@ Summary(pl.UTF-8):	Obsługa XIM dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
 Requires:	im-chooser
-Requires:	libgxim >= 0.4.0
+Requires:	libgxim >= 0.5.0
 
 %description xim
 IMSettings is a framework that delivers Input Method settings and
