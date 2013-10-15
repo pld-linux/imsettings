@@ -6,12 +6,12 @@
 Summary:	Delivery framework for general Input Method configuration
 Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
-Version:	1.6.3
+Version:	1.6.4
 Release:	1
 License:	LGPL v2+
 Group:		Applications/System
 Source0:	https://bitbucket.org/tagoh/imsettings/downloads/%{name}-%{version}.tar.bz2
-# Source0-md5:	1a2253f548f7da6ff1211d01e48a8b98
+# Source0-md5:	f8a0a31da6ad98e9b9001b172c0a1ddd
 Patch0:		%{name}-constraint-of-language.patch
 Patch1:		%{name}-no-bash.patch
 Patch2:		%{name}-format-security.patch
