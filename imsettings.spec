@@ -1,17 +1,17 @@
 #
 # Conditional build:
-%bcond_without	mate	# MATE support module
-%bcond_without	xfce	# Xfce support module
+%bcond_without	mateconf	# MATE <= 1.4 (MateConf) support module
+%bcond_without	xfce		# Xfce support module
 #
 Summary:	Delivery framework for general Input Method configuration
 Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
-Version:	1.6.4
+Version:	1.6.7
 Release:	1
 License:	LGPL v2+
 Group:		Applications/System
 Source0:	https://bitbucket.org/tagoh/imsettings/downloads/%{name}-%{version}.tar.bz2
-# Source0-md5:	f8a0a31da6ad98e9b9001b172c0a1ddd
+# Source0-md5:	81ceddbbb443c101d7993a60c5ce6223
 Patch0:		%{name}-constraint-of-language.patch
 Patch1:		%{name}-no-bash.patch
 Patch2:		%{name}-format-security.patch
@@ -20,7 +20,7 @@ BuildRequires:	GConf2-devel >= 2.0
 BuildRequires:	dbus-devel
 BuildRequires:	desktop-file-utils
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.26.0
+BuildRequires:	glib2-devel >= 1:2.32.0
 BuildRequires:	gobject-introspection-devel >= 1.30.0
 # for fallback support in GTK+
 BuildRequires:	gtk+2-devel >= 2:2.24.11
@@ -28,7 +28,7 @@ BuildRequires:	gtk+3-devel >= 3.3.3
 BuildRequires:	gtk-doc >= 1.0
 BuildRequires:	libgxim-devel >= 0.5.0
 BuildRequires:	libnotify-devel >= 0.7.0
-%{?with_mate:BuildRequires:	mate-conf-devel}
+%{?with_mateconf:BuildRequires:	mate-conf-devel}
 BuildRequires:	pkgconfig
 %{?with_xfce:BuildRequires:	xfconf-devel}
 BuildRequires:	xorg-lib-libX11-devel
@@ -58,7 +58,7 @@ Ten pakiet zawiera główne usługi DBus oraz trochę narzędzi.
 Summary:	IMSettings library
 Summary(pl.UTF-8):	Biblioteka IMSettings
 Group:		Libraries
-Requires:	glib2 >= 1:2.26.0
+Requires:	glib2 >= 1:2.32.0
 
 %description libs
 IMSettings library.
@@ -71,7 +71,7 @@ Summary:	Header files for IMSettings library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki IMSettings
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.26.0
+Requires:	glib2-devel >= 1:2.32.0
 
 %description devel
 Header files for IMSettings library.
@@ -91,28 +91,30 @@ Static IMSettings library.
 %description static -l pl.UTF-8
 Statyczna biblioteka IMSettings.
 
-%package xim
-Summary:	XIM support on imsettings
-Summary(pl.UTF-8):	Obsługa XIM dla imsettings
+%package cinnamon
+Summary:	Cinnamon (via GSettings) support on imsettings
+Summary(pl.UTF-8):	Obsługa Cinnamon (poprzez GSettings) dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
 Requires:	im-chooser
-Requires:	libgxim >= 0.5.0
+Provides:	%{name}-desktop-module = %{version}-%{release}
 
-%description xim
+%description cinnamon
 IMSettings is a framework that delivers Input Method settings and
 applies the changes so they take effect immediately without any need
 to restart applications or the desktop.
 
-This package contains a module to get this working with XIM.
+This package contains a module to get this working on Cinnamon (using
+GSettings).
 
-%description xim -l pl.UTF-8
+%description cinnamon -l pl.UTF-8
 IMSettings to szkielet udostępniający ustawienia metod wprowadzania
 znaków (Input Method) i wykonujący zmiany tak, że wchodzą w życie
 natychmiast bez potrzeby restartu aplikacji ani środowiska
 graficznego.
 
-Ten pakiet zawiera moduł umożliwiający to dla usługi XIM.
+Ten pakiet zawiera moduł umożliwiający to dla aplikacji Cinnamon
+(korzystających z GSettings).
 
 %package gnome2
 Summary:	GNOME 2 (GConf) support on imsettings
@@ -164,9 +166,58 @@ graficznego.
 Ten pakiet zawiera moduł umożliwiający to dla aplikacji GNOME 3
 (korzystających z GSettings).
 
+%package lxde
+Summary:	LXDE support on imsettings
+Summary(pl.UTF-8):	Obsługa LXDE dla imsettings
+Group:		Applications/System
+Requires:	%{name} = %{version}-%{release}
+#Requires:	lxde-settings-daemon
+Requires:	lxsession
+Provides:	%{name}-desktop-module = %{version}-%{release}
+
+%description lxde
+IMSettings is a framework that delivers Input Method settings and
+applies the changes so they take effect immediately without any need
+to restart applications or the desktop.
+
+This package contains a module to get this working on LXDE.
+
+%description lxde -l pl.UTF-8
+IMSettings to szkielet udostępniający ustawienia metod wprowadzania
+znaków (Input Method) i wykonujący zmiany tak, że wchodzą w życie
+natychmiast bez potrzeby restartu aplikacji ani środowiska
+graficznego.
+
+Ten pakiet zawiera moduł umożliwiający to dla aplikacji LXDE.
+
+%package mate-conf
+Summary:	MATE <= 1.4 (MateConf) support on imsettings
+Summary(pl.UTF-8):	Obsługa MATE <= 1.4 (MateConfa) dla imsettings
+Group:		Applications/System
+Requires:	%{name} = %{version}-%{release}
+Requires:	im-chooser
+Provides:	%{name}-desktop-module = %{version}-%{release}
+
+%description mate-conf
+IMSettings is a framework that delivers Input Method settings and
+applies the changes so they take effect immediately without any need
+to restart applications or the desktop.
+
+This package contains a module to get this working on MATE <= 1.4
+(using MateConf).
+
+%description mate-conf -l pl.UTF-8
+IMSettings to szkielet udostępniający ustawienia metod wprowadzania
+znaków (Input Method) i wykonujący zmiany tak, że wchodzą w życie
+natychmiast bez potrzeby restartu aplikacji ani środowiska
+graficznego.
+
+Ten pakiet zawiera moduł umożliwiający to dla aplikacji MATE <= 1.4
+(korzystających z MateConfa).
+
 %package mate
-Summary:	MATE (MateConf) support on imsettings
-Summary(pl.UTF-8):	Obsługa MATE (MateConfa) dla imsettings
+Summary:	MATE 1.5+ (mate-settings) support on imsettings
+Summary(pl.UTF-8):	Obsługa MATE 1.5+ (mate-settings) dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
 Requires:	im-chooser
@@ -177,8 +228,8 @@ IMSettings is a framework that delivers Input Method settings and
 applies the changes so they take effect immediately without any need
 to restart applications or the desktop.
 
-This package contains a module to get this working on MATE (using
-MateConf).
+This package contains a module to get this working on MATE 1.5+ (using
+mate-settings).
 
 %description mate -l pl.UTF-8
 IMSettings to szkielet udostępniający ustawienia metod wprowadzania
@@ -186,8 +237,8 @@ znaków (Input Method) i wykonujący zmiany tak, że wchodzą w życie
 natychmiast bez potrzeby restartu aplikacji ani środowiska
 graficznego.
 
-Ten pakiet zawiera moduł umożliwiający to dla aplikacji MATE
-(korzystających z MateConfa).
+Ten pakiet zawiera moduł umożliwiający to dla aplikacji MATE 1.5+
+(korzystających z mate-settings).
 
 %package qt
 Summary:	Qt support on imsettings
@@ -236,29 +287,28 @@ graficznego.
 
 Ten pakiet zawiera moduł umożliwiający to dla aplikacji Xfce.
 
-%package lxde
-Summary:	LXDE support on imsettings
-Summary(pl.UTF-8):	Obsługa LXDE dla imsettings
+%package xim
+Summary:	XIM support on imsettings
+Summary(pl.UTF-8):	Obsługa XIM dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
-#Requires:	lxde-settings-daemon
-Requires:	lxsession
-Provides:	%{name}-desktop-module = %{version}-%{release}
+Requires:	im-chooser
+Requires:	libgxim >= 0.5.0
 
-%description lxde
+%description xim
 IMSettings is a framework that delivers Input Method settings and
 applies the changes so they take effect immediately without any need
 to restart applications or the desktop.
 
-This package contains a module to get this working on LXDE.
+This package contains a module to get this working with XIM.
 
-%description lxde -l pl.UTF-8
+%description xim -l pl.UTF-8
 IMSettings to szkielet udostępniający ustawienia metod wprowadzania
 znaków (Input Method) i wykonujący zmiany tak, że wchodzą w życie
 natychmiast bez potrzeby restartu aplikacji ani środowiska
 graficznego.
 
-Ten pakiet zawiera moduł umożliwiający to dla aplikacji LXDE.
+Ten pakiet zawiera moduł umożliwiający to dla usługi XIM.
 
 %prep
 %setup -q
@@ -334,10 +384,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{_libdir}/libimsettings.a
 
-%files xim
+%files cinnamon
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/imsettings-xim
-%attr(755,root,root) %{_libdir}/%{name}/libimsettings-xim.so
+%attr(755,root,root) %{_libdir}/%{name}/libimsettings-cinnamon-gsettings.so
 
 %files gnome2
 %defattr(644,root,root,755)
@@ -347,12 +396,19 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/%{name}/libimsettings-gsettings.so
 
-%if %{with mate}
-%files mate
+%files lxde
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/%{name}/libimsettings-lxde.so
+
+%if %{with mateconf}
+%files mate-conf
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/%{name}/libimsettings-mateconf.so
-%attr(755,root,root) %{_libdir}/%{name}/libimsettings-mate-gsettings.so
 %endif
+
+%files mate
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/%{name}/libimsettings-mate-gsettings.so
 
 %files qt
 %defattr(644,root,root,755)
@@ -364,6 +420,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/%{name}/libimsettings-xfce.so
 %endif
 
-%files lxde
+%files xim
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/%{name}/libimsettings-lxde.so
+%attr(755,root,root) %{_bindir}/imsettings-xim
+%attr(755,root,root) %{_libdir}/%{name}/libimsettings-xim.so

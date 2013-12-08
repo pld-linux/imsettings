@@ -58,53 +58,6 @@
  		return FALSE;
  	} else {
  		/* close io channels prior to create new one */
---- imsettings-1.4.0/imsettings-daemon/imsettings-server.c~	2012-08-28 12:50:19.000000000 +0200
-+++ imsettings-1.4.0/imsettings-daemon/imsettings-server.c	2012-11-12 21:53:57.621283613 +0100
-@@ -119,7 +119,7 @@
- 	notify_notification_show(priv->notify, &err);
- 
- 	if (err) {
--		g_warning(err->message);
-+		g_warning("%s", err->message);
- 		g_error_free(err);
- 	}
- }
-@@ -707,7 +707,7 @@
- 		g_clear_error(error);
- 		g_set_error(error, IMSETTINGS_GERROR, IMSETTINGS_GERROR_IM_NOT_FOUND,
- 			    _("No such input method on your system: %s"), module);
--		g_warning((*error)->message);
-+		g_warning("%s", (*error)->message);
- 
- 		return FALSE;
- 	}
-@@ -716,7 +716,7 @@
- 	if (!*info) {
- 		g_set_error(error, IMSETTINGS_GERROR, IMSETTINGS_GERROR_OOM,
- 			    _("Out of memory"));
--		g_warning((*error)->message);
-+		g_warning("%s", (*error)->message);
- 
- 		return FALSE;
- 	}
-@@ -750,7 +750,7 @@
- 	} else if (match) {
- 		g_set_error(error, IMSETTINGS_GERROR, IMSETTINGS_GERROR_NOT_TARGETED_DESKTOP,
- 			    _("Current desktop isn't targeted by IMSettings."));
--		g_warning((*error)->message);
-+		g_warning("%s", (*error)->message);
- 
- 		return FALSE;
- 	}
-@@ -1222,7 +1222,7 @@
- 		g_dbus_method_invocation_return_error(invocation,
- 						      IMSETTINGS_GERROR,
- 						      err->code,
--						      err->message);
-+						      "%s", err->message);
- 		g_error_free(err);
- 	} else {
- 		if (value) {
 --- imsettings-1.4.0/backends/lxde/lxde-module.c~	2012-04-23 10:28:00.000000000 +0200
 +++ imsettings-1.4.0/backends/lxde/lxde-module.c	2012-11-12 21:54:41.767948722 +0100
 @@ -176,7 +176,7 @@
