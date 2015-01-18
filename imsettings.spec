@@ -2,19 +2,19 @@
 # Conditional build:
 %bcond_without	mateconf	# MATE <= 1.4 (MateConf) support module
 %bcond_without	xfce		# Xfce support module
+%bcond_without	static_libs	# static library
 #
 Summary:	Delivery framework for general Input Method configuration
 Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
-Version:	1.6.7
-Release:	3
+Version:	1.6.8
+Release:	1
 License:	LGPL v2+
 Group:		Applications/System
 Source0:	https://bitbucket.org/tagoh/imsettings/downloads/%{name}-%{version}.tar.bz2
-# Source0-md5:	81ceddbbb443c101d7993a60c5ce6223
+# Source0-md5:	c31429f1d60e36d7f811f871c75b6c41
 Patch0:		%{name}-constraint-of-language.patch
 Patch1:		%{name}-no-bash.patch
-Patch2:		%{name}-format-security.patch
 URL:		https://tagoh.bitbucket.org/imsettings/
 BuildRequires:	GConf2-devel >= 2.0
 BuildRequires:	dbus-devel
@@ -314,11 +314,11 @@ Ten pakiet zawiera moduł umożliwiający to dla usługi XIM.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %build
 %configure \
 	--disable-silent-rules \
+	%{?with_static_libs:--enable-static} \
 	--with-xinputsh=50-xinput.sh \
 	--with-html-dir=%{_gtkdocdir}
 
@@ -331,7 +331,10 @@ rm -rf $RPM_BUILD_ROOT
 	DESTDIR=$RPM_BUILD_ROOT
 
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/*.la
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/imsettings/*.{a,la}
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/imsettings/*.la
+%if %{with static_libs}
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/imsettings/*.a
+%endif
 
 %find_lang %{name}
 
@@ -379,9 +382,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/gir-1.0/IMSettings-1.3.gir
 %{_gtkdocdir}/imsettings
 
+%if %{with static_libs}
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libimsettings.a
+%endif
 
 %files cinnamon
 %defattr(644,root,root,755)
