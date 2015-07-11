@@ -8,7 +8,7 @@ Summary:	Delivery framework for general Input Method configuration
 Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
 Version:	1.6.8
-Release:	2
+Release:	3
 License:	LGPL v2+
 Group:		Applications/System
 Source0:	https://bitbucket.org/tagoh/imsettings/downloads/%{name}-%{version}.tar.bz2
@@ -348,7 +348,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog NEWS README
 
-%{_sysconfdir}/X11/xinit/xinitrc.d/50-xinput.sh
+%attr(755,root,root) %{_sysconfdir}/X11/xinit/xinitrc.d/50-xinput.sh
 %{_sysconfdir}/X11/xinit/xinput.d/*.conf
 %{_sysconfdir}/xdg/autostart/imsettings-start.desktop
 
