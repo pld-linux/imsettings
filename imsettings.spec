@@ -8,7 +8,7 @@ Summary:	Delivery framework for general Input Method configuration
 Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
 Version:	1.7.0
-Release:	1
+Release:	2
 License:	LGPL v2+
 Group:		Applications/System
 Source0:	https://bitbucket.org/tagoh/imsettings/downloads/%{name}-%{version}.tar.bz2
@@ -361,12 +361,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/imsettings-info
 %attr(755,root,root) %{_bindir}/imsettings-switch
 
-%dir %{_libdir}/%{name}
-%{_libdir}/imsettings-functions
-%attr(755,root,root) %{_libdir}/imsettings-check
-%attr(755,root,root) %{_libdir}/imsettings-daemon
-%attr(755,root,root) %{_libdir}/xinputinfo.sh
-%attr(755,root,root) %{_libdir}/imsettings-target-checker.sh
+%{_libexecdir}/imsettings-functions
+%attr(755,root,root) %{_libexecdir}/imsettings-check
+%attr(755,root,root) %{_libexecdir}/imsettings-daemon
+%attr(755,root,root) %{_libexecdir}/xinputinfo.sh
+%attr(755,root,root) %{_libexecdir}/imsettings-target-checker.sh
 %{_datadir}/dbus-1/services/imsettings-daemon.service
 %{_pixmapsdir}/imsettings-unknown.png
 
