@@ -8,7 +8,7 @@ Summary:	Delivery framework for general Input Method configuration
 Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
 Version:	1.7.0
-Release:	2
+Release:	3
 License:	LGPL v2+
 Group:		Applications/System
 Source0:	https://bitbucket.org/tagoh/imsettings/downloads/%{name}-%{version}.tar.bz2
@@ -360,6 +360,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/imsettings-list
 %attr(755,root,root) %{_bindir}/imsettings-info
 %attr(755,root,root) %{_bindir}/imsettings-switch
+
+%dir %{_libdir}/%{name}
 
 %{_libexecdir}/imsettings-functions
 %attr(755,root,root) %{_libexecdir}/imsettings-check
