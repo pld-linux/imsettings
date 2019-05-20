@@ -1,9 +1,9 @@
---- imsettings-1.2.8/data/xinput.sh.in.in.orig	2012-02-10 03:25:18.000000000 +0100
-+++ imsettings-1.2.8/data/xinput.sh.in.in	2012-02-17 21:14:57.666422719 +0100
-@@ -266,8 +266,34 @@
+--- imsettings-1.8.1/data/xinput.sh.in.in.orig	2019-05-20 20:37:47.213623978 +0200
++++ imsettings-1.8.1/data/xinput.sh.in.in	2019-05-20 20:39:10.716504938 +0200
+@@ -57,8 +57,34 @@
  	SHORT_DESC="User Specific"
      fi
- elif [ -r "$SYS_XINPUTRC" ]; then
+ elif [ -r "$SYS_XINPUTRC" -a "x$IMSETTINGS_DISABLE_SYS_XINPUTRC" = "xno" ]; then
 -    source "$SYS_XINPUTRC"
 -    READ_XINPUTRC=$SYS_XINPUTRC
 +    # FIXME: This hardcoded list has to be gone in the future.
@@ -36,4 +36,4 @@
 +    fi
  fi
  
- [ -z "$IMSETTINGS_INTEGRATE_DESKTOP" ] && IMSETTINGS_INTEGRATE_DESKTOP=yes
+ [ -z "${IMSETTINGS_INTEGRATE_DESKTOP-}" ] && IMSETTINGS_INTEGRATE_DESKTOP=yes

@@ -1,5 +1,5 @@
---- imsettings-1.7.0/data/imsettings-functions.in.orig	2016-02-22 07:30:18.000000000 +0100
-+++ imsettings-1.7.0/data/imsettings-functions.in	2016-02-28 15:24:33.962090210 +0100
+--- imsettings-1.8.1/data/imsettings-functions.in.orig	2019-02-20 05:57:23.000000000 +0100
++++ imsettings-1.8.1/data/imsettings-functions.in	2019-05-20 20:46:25.377483510 +0200
 @@ -23,7 +23,7 @@
  LOGDIR="${XDG_CACHE_HOME:-$HOME/.cache}/imsettings"
  LOGFILE="$LOGDIR/log"
@@ -49,10 +49,10 @@
  
 -function get_desktop() {
 +get_desktop() {
-     if [ -n "$IMSETTINGS_DESKTOP" ]; then
- 	GUESS_DESKTOP="\$IMSETTINGS_DESKTOP"
- 	echo "$IMSETTINGS_DESKTOP"
-@@ -114,7 +114,7 @@
+     if [ -n "$XDG_CURRENT_DESKTOP" ]; then
+ 	GUESS_DESKTOP="\$XDG_CURRENT_DESKTOP"
+ 	echo "$XDG_CURRENT_DESKTOP"
+@@ -117,7 +117,7 @@
      fi
  }
  
@@ -61,7 +61,7 @@
      [ -n "$IMSETTINGS_DISABLE_DESKTOP_CHECK" ] && return 0
      case "$(get_desktop|tr '[A-Z]' '[a-z]')" in
  	cinnamon*)
-@@ -149,7 +149,7 @@
+@@ -152,7 +152,7 @@
      return 1
  }
  
@@ -70,7 +70,7 @@
      [ -n "$IMSETTINGS_DISABLE_DESKTOP_CHECK" ] && return 0
      case "$(get_desktop|tr '[A-Z]' '[a-z]')" in
  	*)
-@@ -162,7 +162,7 @@
+@@ -165,7 +165,7 @@
      return 1
  }
  
@@ -79,8 +79,14 @@
      [ -n "$IMSETTINGS_DISABLE_DESKTOP_CHECK" ] && return 0
      if check_imsettings_capability xim; then
  	return 0
-@@ -171,7 +171,7 @@
+@@ -174,12 +174,12 @@
      return 1
+ }
+ 
+-function is_desktop_supported() {
++is_desktop_supported() {
+     @libexecdir[@]/imsettings-check --check-desktop $(get_desktop) >/dev/null
+     [ $? -eq 0 ]
  }
  
 -function setup_gtk_immodule() {
@@ -88,7 +94,7 @@
      if is_imsettings_enabled && is_gtk_supported; then
  	# Ensure GTK_IM_MODULE is empty. otherwise GTK+ doesn't pick up immodule through XSETTINGS
  	unset GTK_IM_MODULE
-@@ -181,7 +181,7 @@
+@@ -189,7 +189,7 @@
      fi
  }
  
@@ -97,7 +103,7 @@
      if is_imsettings_enabled && is_qt_supported; then
  	# FIXME: Qt doesn't support XSETTINGS for immodule yet.
  	#        We still need to go with the older way.
-@@ -191,7 +191,7 @@
+@@ -199,7 +199,7 @@
      fi
  }
  
@@ -106,7 +112,7 @@
      if is_imsettings_enabled && is_xim_supported; then
  	# setup XMODIFIERS
  	XMODIFIERS="@im=imsettings"
-@@ -202,7 +202,7 @@
+@@ -210,7 +210,7 @@
      fi
  }
  
@@ -115,7 +121,7 @@
      print_info
      if [ -n "$DRY_RUN" ]; then
  	log "*** DRY RUN MODE: running IM through imsettings"
-@@ -217,7 +217,7 @@
+@@ -225,7 +225,7 @@
      fi
  }
  
@@ -124,7 +130,7 @@
      print_info
      if [ -n "$DRY_RUN" ]; then
  	log "*** DRY RUN MODE: running IM without imsettings"
-@@ -230,7 +230,7 @@
+@@ -238,7 +238,7 @@
      fi
  }
  
@@ -133,7 +139,7 @@
      $1
      if [ $? -eq 0 ]; then
  	log yes
-@@ -239,7 +239,7 @@
+@@ -247,7 +247,7 @@
      fi
  }
  
@@ -203,24 +209,24 @@
      fi
  fi
  
---- imsettings-1.2.4/data/xinputinfo.sh.in.orig	2011-03-08 07:39:32.000000000 +0100
-+++ imsettings-1.2.4/data/xinputinfo.sh.in	2011-07-17 22:57:52.000000000 +0200
+--- imsettings-1.8.1/data/xinputinfo.sh.in.orig	2019-02-20 05:32:55.000000000 +0100
++++ imsettings-1.8.1/data/xinputinfo.sh.in	2019-05-20 20:47:06.287261883 +0200
 @@ -1,4 +1,4 @@
 -#!/bin/bash
 +#!/bin/sh
  # xinputinfo.sh
- # Copyright (C) 2008 Red Hat, Inc. All rights reserved.
- #
+ # Copyright (C) 2008-2012 Red Hat, Inc. All rights reserved.
+ 
 @@ -20,7 +20,7 @@
- # Foundation, Inc., 59 Temple Place - Suite 330,
- # Boston, MA 02111-1307, USA.
+ # Free Software Foundation, Inc., 51 Franklin Street, Fifth
+ # Floor, Boston, MA  02110-1301  USA
  
 -function is_script() {
 +is_script() {
      if [ "x$(sed -re '/^[ 	]?*[a-zA-Z0-9_]+=.*/{d};/[ 	]?*#.*/{d}' $1)" = "x" ]; then
  	return 1
      else
-@@ -36,13 +36,13 @@
+@@ -37,13 +37,13 @@
  unset TERM
  if [ -r /etc/profile.d/lang.sh ]; then
      # for Fedora etc
@@ -237,21 +243,22 @@
  fi
  [ -n "$oldterm" ] && export TERM=$oldterm
  
-@@ -52,16 +52,16 @@
- unset AUXILIARY_PROGRAM AUXILIARY_ARGS GTK_IM_MODULE ICON IMSETTINGS_IGNORE_ME LONG_DESC PREFERENCE_PROGRAM PREFERENCE_ARGS QT_IM_MODULE SHORT_DESC XIM XIM_PROGRAM XIM_ARGS IS_XIM
+@@ -53,17 +53,17 @@
+ unset AUXILIARY_PROGRAM AUXILIARY_ARGS GTK_IM_MODULE ICON IMSETTINGS_IGNORE_ME LONG_DESC NOT_RUN PREFERENCE_PROGRAM PREFERENCE_ARGS QT_IM_MODULE SHORT_DESC XIM XIM_PROGRAM XIM_ARGS IS_XIM
  
  if [ $# -gt 0 ]; then
 -    source $1
 +    . $1
      IMSETTINGS_FILENAME=$1
  else
-     [ -z "$IMSETTINGS_DISABLE_USER_XINPUTRC" ] && IMSETTINGS_DISABLE_USER_XINPUTRC=no
+     [ -z "${IMSETTINGS_DISABLE_USER_XINPUTRC-}" ] && IMSETTINGS_DISABLE_USER_XINPUTRC=no
+     [ -z "${IMSETTINGS_DISABLE_SYS_XINPUTRC-}" ] && IMSETTINGS_DISABLE_SYS_XINPUTRC=no
  
      if [ -r "$USER_XINPUTRC" -a "x$IMSETTINGS_DISABLE_USER_XINPUTRC" = "xno" ]; then
 -	source "$USER_XINPUTRC"
 +	. "$USER_XINPUTRC"
  	IMSETTINGS_FILENAME=$USER_XINPUTRC
-     elif [ -r "$SYS_XINPUTRC" ]; then
+     elif [ -r "$SYS_XINPUTRC" -a "x$IMSETTINGS_DISABLE_SYS_XINPUTRC" = "xno" ]; then
 -	source "$SYS_XINPUTRC"
 +	. "$SYS_XINPUTRC"
  	IMSETTINGS_FILENAME=$SYS_XINPUTRC

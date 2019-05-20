@@ -1,5 +1,6 @@
 #
 # Conditional build:
+%bcond_without	gconf		# GNOME 2.x (GConf) support module
 %bcond_without	mateconf	# MATE <= 1.4 (MateConf) support module
 %bcond_without	xfce		# Xfce support module
 %bcond_without	static_libs	# static library
@@ -7,19 +8,19 @@
 Summary:	Delivery framework for general Input Method configuration
 Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
-Version:	1.7.0
-Release:	3
+Version:	1.8.1
+Release:	1
 License:	LGPL v2+
 Group:		Applications/System
 Source0:	https://bitbucket.org/tagoh/imsettings/downloads/%{name}-%{version}.tar.bz2
-# Source0-md5:	decc1e438da81bcf84fa4156529475e4
+# Source0-md5:	c04341a008d8c60e1532f033f4020f44
 Patch0:		%{name}-constraint-of-language.patch
 Patch1:		%{name}-no-bash.patch
 URL:		https://tagoh.bitbucket.org/imsettings/
-BuildRequires:	GConf2-devel >= 2.0
+%{?with_gconf:BuildRequires:	GConf2-devel >= 2.0}
 BuildRequires:	dbus-devel
 BuildRequires:	desktop-file-utils
-BuildRequires:	gettext-tools
+BuildRequires:	gettext-tools >= 0.19.8
 BuildRequires:	glib2-devel >= 1:2.32.0
 BuildRequires:	gobject-introspection-devel >= 1.30.0
 # for fallback support in GTK+
@@ -377,14 +378,14 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libimsettings.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libimsettings.so.5
-%{_libdir}/girepository-1.0/IMSettings-1.7.typelib
+%{_libdir}/girepository-1.0/IMSettings-1.8.typelib
 
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libimsettings.so
 %{_pkgconfigdir}/imsettings.pc
 %{_includedir}/imsettings
-%{_datadir}/gir-1.0/IMSettings-1.7.gir
+%{_datadir}/gir-1.0/IMSettings-1.8.gir
 %{_gtkdocdir}/imsettings
 
 %if %{with static_libs}
@@ -397,9 +398,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/%{name}/libimsettings-cinnamon-gsettings.so
 
+%if %{with gconf}
 %files gnome2
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/%{name}/libimsettings-gconf.so
+%endif
 
 %files gnome3
 %defattr(644,root,root,755)
