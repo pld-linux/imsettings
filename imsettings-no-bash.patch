@@ -272,3 +272,28 @@
  # imsettings-target-checker.sh
  # Copyright (C) 2013 Akira TAGOH
  #
+--- imsettings-1.8.2/imsettings-daemon/imsettings-server.c.orig	2019-11-14 06:08:03.000000000 +0100
++++ imsettings-1.8.2/imsettings-daemon/imsettings-server.c	2020-04-24 16:54:57.049247210 +0200
+@@ -722,9 +722,9 @@
+ 		helper_path = g_strdup(IMSETTINGS_HELPER_PATH);
+ 	script = g_build_filename(helper_path, "imsettings-target-checker.sh", NULL);
+ 	if (desktop)
+-		cmd = g_strdup_printf("bash -c 'export XDG_CURRENT_DESKTOP=%s; bash %s'", quoted_desktop ? quoted_desktop : "", script);
++		cmd = g_strdup_printf("sh -c 'export XDG_CURRENT_DESKTOP=%s; sh %s'", quoted_desktop ? quoted_desktop : "", script);
+ 	else
+-		cmd = g_strdup_printf("bash -c %s", script);
++		cmd = g_strdup_printf("sh -c %s", script);
+ 	g_free(script);
+ 	g_free(helper_path);
+ 
+--- imsettings-1.8.2/utils/imsettings-switch.c.orig	2019-11-14 06:10:12.000000000 +0100
++++ imsettings-1.8.2/utils/imsettings-switch.c	2020-04-24 16:55:51.335619782 +0200
+@@ -105,7 +105,7 @@
+ 		else
+ 			helper_path = g_strdup(IMSETTINGS_HELPER_PATH);
+ 		script = g_build_filename(helper_path, "imsettings-functions", NULL);
+-		cmd = g_strdup_printf("bash -c '. %s && echo -n $(get_desktop)'", script);
++		cmd = g_strdup_printf("sh -c '. %s && echo -n $(get_desktop)'", script);
+ 		g_free(script);
+ 		g_free(helper_path);
+ 		g_spawn_command_line_sync(cmd, &out, NULL, &ret, &error);
