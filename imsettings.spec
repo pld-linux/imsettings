@@ -1,5 +1,6 @@
 #
 # Conditional build:
+%bcond_without	apidocs		# gtk-doc based API documentation
 %bcond_without	gconf		# GNOME 2.x (GConf) support module
 %bcond_without	mateconf	# MATE <= 1.4 (MateConf) support module
 %bcond_without	xfce		# Xfce support module
@@ -8,20 +9,24 @@
 Summary:	Delivery framework for general Input Method configuration
 Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
-Version:	1.8.3
+Version:	1.8.4
 Release:	1
 License:	LGPL v2+
 Group:		Applications/System
-Source0:	https://bitbucket.org/tagoh/imsettings/downloads/%{name}-%{version}.tar.bz2
-# Source0-md5:	29f041aa9d02a244474336b5766b9de9
+#Source0Download: https://gitlab.com/tagoh/imsettings/-/releases
+Source0:	https://gitlab.com/tagoh/imsettings/-/archive/%{version}/%{name}-%{version}.tar.bz2
+# Source0-md5:	1ce5f646d9f42300e4a94c3068b985cd
 Patch0:		%{name}-constraint-of-language.patch
 Patch1:		%{name}-no-bash.patch
 URL:		https://tagoh.bitbucket.org/imsettings/
+BuildRequires:	autoconf >= 2.69
+BuildRequires:	automake >= 1:1.11
 %{?with_gconf:BuildRequires:	GConf2-devel >= 2.0}
 BuildRequires:	dbus-devel
 BuildRequires:	desktop-file-utils
+BuildRequires:	docbook2X
 BuildRequires:	gettext-tools >= 0.19.8
-BuildRequires:	glib2-devel >= 1:2.32.0
+BuildRequires:	glib2-devel >= 1:2.70.0
 BuildRequires:	gobject-introspection-devel >= 1.30.0
 # for fallback support in GTK+
 BuildRequires:	gtk+2-devel >= 2:2.24.11
@@ -29,8 +34,10 @@ BuildRequires:	gtk+3-devel >= 3.3.3
 BuildRequires:	gtk-doc >= 1.0
 BuildRequires:	libgxim-devel >= 0.5.0
 BuildRequires:	libnotify-devel >= 0.7.0
+BuildRequires:	libtool >= 2:2.2
 %{?with_mateconf:BuildRequires:	mate-conf-devel}
 BuildRequires:	pkgconfig
+BuildRequires:	rpm-build >= 4.6
 %{?with_xfce:BuildRequires:	xfconf-devel}
 BuildRequires:	xorg-lib-libX11-devel
 Requires:	%{name}-desktop-module = %{version}-%{release}
@@ -59,7 +66,7 @@ Ten pakiet zawiera główne usługi DBus oraz trochę narzędzi.
 Summary:	IMSettings library
 Summary(pl.UTF-8):	Biblioteka IMSettings
 Group:		Libraries
-Requires:	glib2 >= 1:2.32.0
+Requires:	glib2 >= 1:2.70.0
 
 %description libs
 IMSettings library.
@@ -72,7 +79,7 @@ Summary:	Header files for IMSettings library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki IMSettings
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.32.0
+Requires:	glib2-devel >= 1:2.70.0
 
 %description devel
 Header files for IMSettings library.
@@ -91,6 +98,18 @@ Static IMSettings library.
 
 %description static -l pl.UTF-8
 Statyczna biblioteka IMSettings.
+
+%package apidocs
+Summary:	API documentation for IMSettings library
+Summary(pl.UTF-8):	Dokumentacja API biblioteki IMSettings
+Group:		Documentation
+BuildArch:	noarch
+
+%description apidocs
+API documentation for IMSettings library.
+
+%description apidocs -l pl.UTF-8
+Dokumentacja API biblioteki IMSettings.
 
 %package cinnamon
 Summary:	Cinnamon (via GSettings) support on imsettings
@@ -316,8 +335,21 @@ Ten pakiet zawiera moduł umożliwiający to dla usługi XIM.
 %patch0 -p1
 %patch1 -p1
 
+%{__sed} -i -e '/po\/Makefile\.in/d' configure.ac
+
+install -d m4macros
+
 %build
+%{__gtkdocize}
+%{__gettextize}
+%{__libtoolize}
+%{__aclocal} -I m4macros
+%{__autoconf}
+%{__autoheader}
+%{__automake}
 %configure \
+	DB2MAN=/usr/bin/docbook2X2man \
+	%{?with_apidocs:--enable-gtk-doc} \
 	--disable-silent-rules \
 	%{?with_static_libs:--enable-static} \
 	--with-xinputsh=50-xinput.sh \
@@ -349,7 +381,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog NEWS README
+%doc AUTHORS NEWS README
 
 %attr(755,root,root) %{_sysconfdir}/X11/xinit/xinitrc.d/50-xinput.sh
 %{_sysconfdir}/X11/xinit/xinput.d/none.conf
@@ -388,12 +420,17 @@ rm -rf $RPM_BUILD_ROOT
 %{_pkgconfigdir}/imsettings.pc
 %{_includedir}/imsettings
 %{_datadir}/gir-1.0/IMSettings-1.8.gir
-%{_gtkdocdir}/imsettings
 
 %if %{with static_libs}
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libimsettings.a
+%endif
+
+%if %{with apidocs}
+%files apidocs
+%defattr(644,root,root,755)
+%{_gtkdocdir}/imsettings
 %endif
 
 %files cinnamon

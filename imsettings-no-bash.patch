@@ -1,162 +1,181 @@
---- imsettings-1.8.3/data/imsettings-functions.in.orig	2021-11-19 11:25:33.000000000 +0100
-+++ imsettings-1.8.3/data/imsettings-functions.in	2023-09-08 16:33:30.090230112 +0200
+--- imsettings-1.8.4/data/imsettings-functions.in.orig	2023-09-08 17:57:33.267670134 +0200
++++ imsettings-1.8.4/data/imsettings-functions.in	2023-09-08 18:05:24.628449887 +0200
 @@ -23,7 +23,7 @@
  LOGDIR="${XDG_CACHE_HOME:-$HOME/.cache}/imsettings"
  LOGFILE="$LOGDIR/log"
  
 -function log_init() {
 +log_init() {
-     if [ ! -n "$DRY_RUN" ]; then
- 	if [ -f $HOME/.imsettings.log ]; then
- 	    mv $HOME/.imsettings.log $LOGFILE.bak
+   if [ -z "$DRY_RUN" ]; then
+     if [ -f "$HOME"/.imsettings.log ]; then
+       mv "$HOME"/.imsettings.log "$LOGFILE".bak
 @@ -33,20 +33,20 @@ function log_init() {
-     fi
+   fi
  }
  
 -function log() {
 +log() {
-     echo "$@" >> $LOGFILE
+   echo "$@" >> "$LOGFILE"
  }
  
 -function is_dbus_enabled() {
 +is_dbus_enabled() {
-     @libexecdir[@]/imsettings-check --check-dbus
-     [ $? -eq 0 ]
+   @libexecdir[@]/imsettings-check --check-dbus
+   [ $? -eq 0 ]
  }
  
 -function is_imsettings_enabled() {
 +is_imsettings_enabled() {
-     [ -z "$DISABLE_IMSETTINGS" ] && is_dbus_enabled
+   [ -z "$DISABLE_IMSETTINGS" ] && is_dbus_enabled
  }
  
 -function check_imsettings_capability() {
 +check_imsettings_capability() {
-     mod=$1
-     @libexecdir[@]/imsettings-check --check-modules >/dev/null
-     ret=$?
+   mod=$1
+   @libexecdir[@]/imsettings-check --check-modules >/dev/null
+   ret=$?
 @@ -57,7 +57,7 @@ function check_imsettings_capability() {
-     return $ret
+   return $ret
  }
  
 -function lookup_desktop() {
 +lookup_desktop() {
-     ret=$(cat $1)
-     case $ret in
- 	cinnamon*)
+   ret=$(cat "$1")
+   case $ret in
+     cinnamon*)
 @@ -84,7 +84,7 @@ function lookup_desktop() {
-     esac
+   esac
  }
  
 -function get_desktop() {
 +get_desktop() {
-     if [ -n "$XDG_CURRENT_DESKTOP" ]; then
- 	GUESS_DESKTOP="\$XDG_CURRENT_DESKTOP"
- 	echo -n "$XDG_CURRENT_DESKTOP"
-@@ -123,7 +123,7 @@ function get_desktop() {
+   if [ -n "$XDG_CURRENT_DESKTOP" ]; then
+     GUESS_DESKTOP="\$XDG_CURRENT_DESKTOP"
+     echo -n "$XDG_CURRENT_DESKTOP"
+@@ -111,7 +111,7 @@ function get_desktop() {
+     else
+       echo -n "$DESKTOP_SESSION"
      fi
+-    [ "${GUESS_DESKTOP:0:1}" == "/" ] && lookup_desktop "$GUESS_DESKTOP"
++    [ "$(echo "$GUEST_DESKTOP" | cut -c1)" == "/" ] && lookup_desktop "$GUESS_DESKTOP"
+   else
+     echo -n "unknown"
+   fi
+@@ -123,7 +123,7 @@ function get_desktop() {
+   fi
  }
  
 -function is_gtk_supported() {
 +is_gtk_supported() {
-     [ -n "$IMSETTINGS_DISABLE_DESKTOP_CHECK" ] && return 0
-     case "$(get_desktop|tr '[A-Z]' '[a-z]')" in
- 	*wayland)
+   [ -n "$IMSETTINGS_DISABLE_DESKTOP_CHECK" ] && return 0
+   case "$(get_desktop|tr '[:upper:]' '[:lower:]')" in
+     *wayland)
 @@ -163,7 +163,7 @@ function is_gtk_supported() {
-     return 1
+   return 1
  }
  
 -function is_qt_supported() {
 +is_qt_supported() {
-     [ -n "$IMSETTINGS_DISABLE_DESKTOP_CHECK" ] && return 0
-     case "$(get_desktop|tr '[A-Z]' '[a-z]')" in
- 	*wayland)
-@@ -181,7 +181,7 @@ function is_qt_supported() {
-     return 1
+   [ -n "$IMSETTINGS_DISABLE_DESKTOP_CHECK" ] && return 0
+   case "$(get_desktop|tr '[:upper:]' '[:lower:]')" in
+     *wayland)
+@@ -176,7 +176,7 @@ function is_qt_supported() {
+   return 1
  }
  
 -function is_xim_supported() {
 +is_xim_supported() {
-     [ -n "$IMSETTINGS_DISABLE_DESKTOP_CHECK" ] && return 0
-     if check_imsettings_capability xim; then
- 	return 0
-@@ -190,12 +190,12 @@ function is_xim_supported() {
-     return 1
+   [ -n "$IMSETTINGS_DISABLE_DESKTOP_CHECK" ] && return 0
+   if check_imsettings_capability xim; then
+     return 0
+@@ -185,20 +185,20 @@ function is_xim_supported() {
+   return 1
  }
  
 -function is_desktop_supported() {
 +is_desktop_supported() {
-     @libexecdir[@]/imsettings-check --check-desktop $(get_desktop) >/dev/null
-     [ $? -eq 0 ]
+   @libexecdir[@]/imsettings-check --check-desktop "$(get_desktop)" >/dev/null
+   [ $? -eq 0 ]
+ }
+ 
+-function is_action_needed() {
++is_action_needed() {
+   ret=0
+-  for i in ${IMSETTINGS_IGNORE_SESSION//,/ }; do
++  for i in $(echo "${IMSETTINGS_IGNORE_SESSION}" | tr , ' '); do
+     [ "$(get_desktop|tr '[:upper:]' '[:lower:]')" == "$(echo $i|tr '[:upper:]' '[:lower:]')" ] && ret=1
+   done
+   return $ret
  }
  
 -function setup_gtk_immodule() {
 +setup_gtk_immodule() {
-     if is_imsettings_enabled && is_gtk_supported; then
- 	# Ensure GTK_IM_MODULE is empty. otherwise GTK+ doesn't pick up immodule through XSETTINGS
- 	unset GTK_IM_MODULE
-@@ -205,7 +205,7 @@ function setup_gtk_immodule() {
-     fi
+   if ! is_action_needed || is_imsettings_enabled && is_gtk_supported; then
+     # Ensure GTK_IM_MODULE is empty. otherwise GTK+ doesn't pick up immodule through XSETTINGS
+     unset GTK_IM_MODULE
+@@ -207,7 +207,7 @@ function setup_gtk_immodule() {
+   fi
  }
  
 -function setup_qt_immodule() {
 +setup_qt_immodule() {
-     if is_imsettings_enabled && is_qt_supported; then
- 	# FIXME: Qt doesn't support XSETTINGS for immodule yet.
- 	#        We still need to go with the older way.
-@@ -215,7 +215,7 @@ function setup_qt_immodule() {
-     fi
+   if ! is_action_needed; then
+     unset QT_IM_MODULE
+   fi
+@@ -220,7 +220,7 @@ function setup_qt_immodule() {
+   fi
  }
  
 -function setup_xim() {
 +setup_xim() {
-     if is_imsettings_enabled && is_xim_supported; then
- 	# setup XMODIFIERS
- 	XMODIFIERS="@im=imsettings"
-@@ -226,7 +226,7 @@ function setup_xim() {
-     fi
+   if is_imsettings_enabled && is_xim_supported; then
+     # setup XMODIFIERS
+     XMODIFIERS="@im=imsettings"
+@@ -231,7 +231,7 @@ function setup_xim() {
+   fi
  }
  
 -function run_imsettings() {
 +run_imsettings() {
-     print_info
-     if [ -n "$DRY_RUN" ]; then
- 	log "*** DRY RUN MODE: running IM through imsettings"
-@@ -241,7 +241,7 @@ function run_imsettings() {
-     fi
+   print_info
+   if [ -n "$DRY_RUN" ]; then
+     log "*** DRY RUN MODE: running IM through imsettings"
+@@ -248,7 +248,7 @@ function run_imsettings() {
+   fi
  }
  
 -function run_xim() {
 +run_xim() {
-     print_info
-     if [ -n "$DRY_RUN" ]; then
- 	log "*** DRY RUN MODE: running IM without imsettings"
-@@ -254,7 +254,7 @@ function run_xim() {
-     fi
+   print_info
+   if [ -n "$DRY_RUN" ]; then
+     log "*** DRY RUN MODE: running IM without imsettings"
+@@ -263,7 +263,7 @@ function run_xim() {
+   fi
  }
  
 -function print_result() {
 +print_result() {
-     $1
-     if [ $? -eq 0 ]; then
- 	log yes
-@@ -263,7 +263,7 @@ function print_result() {
-     fi
+   $1
+   if [ $? -eq 0 ]; then
+     log yes
+@@ -272,7 +272,7 @@ function print_result() {
+   fi
  }
  
 -function print_info() {
 +print_info() {
-     log "imsettings information"
-     log "=========================="
-     log "XINPUTRC: $READ_XINPUTRC"
---- imsettings-1.5.0/data/xinput.sh.in.in.orig	2012-11-25 18:33:02.248463652 +0100
-+++ imsettings-1.5.0/data/xinput.sh.in.in	2012-11-25 18:47:20.531779098 +0100
+   log "imsettings information"
+   log "=========================="
+   log "XINPUTRC: $READ_XINPUTRC"
+--- imsettings-1.8.4/data/xinput.sh.in.in.orig	2023-09-08 17:57:33.261003504 +0200
++++ imsettings-1.8.4/data/xinput.sh.in.in	2023-09-08 18:06:51.864643955 +0200
 @@ -1,4 +1,4 @@
 -#!/bin/bash
 +#!/bin/sh
  # Copyright (C) 1999-2004,2007-2011 Red Hat, Inc. All rights reserved. This
  # copyrighted material is made available to anyone wishing to use, modify,
  # copy, or redistribute it subject to the terms and conditions of the
-@@ -257,13 +257,13 @@
+@@ -24,13 +24,13 @@ oldterm=$TERM
  unset TERM
  if [ -r /etc/profile.d/lang.sh ]; then
      # for Fedora etc
@@ -173,8 +192,8 @@
  fi
  [ -n "$oldterm" ] && export TERM=$oldterm
  
-@@ -280,7 +280,7 @@
- [ -f "$HOME/.xinputrc.bak" ] && mv $HOME/.xinputrc.bak $CONFIGDIR/xinputrc.bak
+@@ -60,7 +60,7 @@ fi
+ rm -f $XCONFIGDIR/environment.d/imsettings*.conf || :
  
  if [ -r "$USER_XINPUTRC" -a "x$IMSETTINGS_DISABLE_USER_XINPUTRC" = "xno" ]; then
 -    source "$USER_XINPUTRC"
@@ -182,7 +201,7 @@
      READ_XINPUTRC=$USER_XINPUTRC
      if [ ! -h "$USER_XINPUTRC" ]; then
  	SHORT_DESC="User Specific"
-@@ -292,7 +292,7 @@
+@@ -72,7 +72,7 @@ elif [ -r "$SYS_XINPUTRC" -a "x$IMSETTIN
      _sourced_xinputrc=0
      for i in $_im_language_list; do
          if echo $tmplang | grep -q -E "^$i"; then
@@ -191,7 +210,7 @@
              READ_XINPUTRC=$SYS_XINPUTRC
              _sourced_xinputrc=1
              break
-@@ -304,7 +304,7 @@
+@@ -84,7 +84,7 @@ elif [ -r "$SYS_XINPUTRC" -a "x$IMSETTIN
          _xcompose_language_list="am_ET el_GR fi_FI pt_BR ru_RU"
          for i in $_xcompose_language_list; do
              if echo $tmplang | grep -q -E "^$i"; then
@@ -200,7 +219,7 @@
                  _sourced_xinputrc=1
                  break
              fi
-@@ -312,7 +312,7 @@
+@@ -92,7 +92,7 @@ elif [ -r "$SYS_XINPUTRC" -a "x$IMSETTIN
      fi
      if [ $_sourced_xinputrc -eq 0 ]; then
          # Read none.conf to set up properly for locales not listed the above.
@@ -209,24 +228,24 @@
      fi
  fi
  
---- imsettings-1.8.1/data/xinputinfo.sh.in.orig	2019-02-20 05:32:55.000000000 +0100
-+++ imsettings-1.8.1/data/xinputinfo.sh.in	2019-05-20 20:47:06.287261883 +0200
+--- imsettings-1.8.4/data/xinputinfo.sh.in.orig	2023-08-22 13:42:17.000000000 +0200
++++ imsettings-1.8.4/data/xinputinfo.sh.in	2023-09-08 18:08:13.904199508 +0200
 @@ -1,4 +1,4 @@
 -#!/bin/bash
 +#!/bin/sh
  # xinputinfo.sh
  # Copyright (C) 2008-2012 Red Hat, Inc. All rights reserved.
  
-@@ -20,7 +20,7 @@
- # Free Software Foundation, Inc., 51 Franklin Street, Fifth
- # Floor, Boston, MA  02110-1301  USA
+@@ -22,7 +22,7 @@
+ 
+ . @libexecdir[@]/imsettings-functions
  
 -function is_script() {
 +is_script() {
      if [ "x$(sed -re '/^[ 	]?*[a-zA-Z0-9_]+=.*/{d};/[ 	]?*#.*/{d}' $1)" = "x" ]; then
  	return 1
      else
-@@ -37,13 +37,13 @@
+@@ -39,13 +39,13 @@ oldterm=$TERM
  unset TERM
  if [ -r /etc/profile.d/lang.sh ]; then
      # for Fedora etc
@@ -243,8 +262,8 @@
  fi
  [ -n "$oldterm" ] && export TERM=$oldterm
  
-@@ -53,17 +53,17 @@
- unset AUXILIARY_PROGRAM AUXILIARY_ARGS GTK_IM_MODULE ICON IMSETTINGS_IGNORE_ME LONG_DESC NOT_RUN PREFERENCE_PROGRAM PREFERENCE_ARGS QT_IM_MODULE SHORT_DESC XIM XIM_PROGRAM XIM_ARGS IS_XIM
+@@ -55,17 +55,17 @@ tmplang=${LC_CTYPE:-${LANG:-"en_US.UTF-8
+ unset AUXILIARY_PROGRAM AUXILIARY_ARGS GTK_IM_MODULE ICON IMSETTINGS_IGNORE_ME IMSETTINGS_IGNORE_SESSION LONG_DESC NOT_RUN PREFERENCE_PROGRAM PREFERENCE_ARGS QT_IM_MODULE SHORT_DESC XIM XIM_PROGRAM XIM_ARGS IS_XIM
  
  if [ $# -gt 0 ]; then
 -    source $1
