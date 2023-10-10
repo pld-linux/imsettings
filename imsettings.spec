@@ -9,13 +9,13 @@
 Summary:	Delivery framework for general Input Method configuration
 Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
-Version:	1.8.4
+Version:	1.8.7
 Release:	0.1
 License:	LGPL v2+
 Group:		Applications/System
 #Source0Download: https://gitlab.com/tagoh/imsettings/-/releases
 Source0:	https://gitlab.com/tagoh/imsettings/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	1ce5f646d9f42300e4a94c3068b985cd
+# Source0-md5:	77fed58ebee2b4c37a2e7df37c64bb5e
 Patch0:		%{name}-constraint-of-language.patch
 Patch1:		%{name}-no-bash.patch
 URL:		https://tagoh.bitbucket.org/imsettings/
