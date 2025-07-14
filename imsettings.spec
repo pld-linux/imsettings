@@ -332,8 +332,8 @@ Ten pakiet zawiera moduł umożliwiający to dla usługi XIM.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
+%patch -P0 -p1
+%patch -P1 -p1
 
 %{__sed} -i -e '/po\/Makefile\.in/d' configure.ac
 
