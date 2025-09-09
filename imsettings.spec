@@ -2,23 +2,23 @@
 # Conditional build:
 %bcond_without	apidocs		# gtk-doc based API documentation
 %bcond_without	gconf		# GNOME 2.x (GConf) support module
-%bcond_without	mateconf	# MATE <= 1.4 (MateConf) support module
+%bcond_with	mateconf	# MATE <= 1.4 (MateConf) support module
 %bcond_without	xfce		# Xfce support module
 %bcond_without	static_libs	# static library
 #
 Summary:	Delivery framework for general Input Method configuration
 Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
-Version:	1.8.7
-Release:	0.1
+Version:	1.8.10
+Release:	1
 License:	LGPL v2+
 Group:		Applications/System
 #Source0Download: https://gitlab.com/tagoh/imsettings/-/releases
 Source0:	https://gitlab.com/tagoh/imsettings/-/archive/%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	77fed58ebee2b4c37a2e7df37c64bb5e
+# Source0-md5:	ebad666e92bc4da59ba3947b9275d8fb
 Patch0:		%{name}-constraint-of-language.patch
 Patch1:		%{name}-no-bash.patch
-URL:		https://tagoh.bitbucket.org/imsettings/
+URL:		https://gitlab.com/tagoh/imsettings/
 BuildRequires:	autoconf >= 2.69
 BuildRequires:	automake >= 1:1.11
 %{?with_gconf:BuildRequires:	GConf2-devel >= 2.0}
@@ -403,7 +403,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libexecdir}/imsettings-daemon
 %attr(755,root,root) %{_libexecdir}/xinputinfo.sh
 %attr(755,root,root) %{_libexecdir}/imsettings-target-checker.sh
-%{_datadir}/dbus-1/services/imsettings-daemon.service
+%{_datadir}/dbus-1/services/com.redhat.imsettings.service
 %{_pixmapsdir}/imsettings-unknown.png
 
 %{_mandir}/man1/imsettings-*.1*
