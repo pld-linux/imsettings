@@ -10,7 +10,7 @@ Summary:	Delivery framework for general Input Method configuration
 Summary(pl.UTF-8):	Szkielet do ogólnej konfiguracji method wprowadzania znaków
 Name:		imsettings
 Version:	1.8.10
-Release:	2
+Release:	3
 License:	LGPL v2+
 Group:		Applications/System
 #Source0Download: https://gitlab.com/tagoh/imsettings/-/releases
@@ -116,7 +116,7 @@ Summary:	Cinnamon (via GSettings) support on imsettings
 Summary(pl.UTF-8):	Obsługa Cinnamon (poprzez GSettings) dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
-Requires:	im-chooser
+Requires:	im-chooser >= 1.7.5
 Provides:	%{name}-desktop-module = %{version}-%{release}
 
 %description cinnamon
@@ -141,7 +141,7 @@ Summary:	GNOME 2 (GConf) support on imsettings
 Summary(pl.UTF-8):	Obsługa GNOME 2 (GConfa) dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
-Requires:	im-chooser
+Requires:	im-chooser >= 1.7.5
 Provides:	%{name}-desktop-module = %{version}-%{release}
 
 %description gnome2
@@ -166,7 +166,7 @@ Summary:	GNOME 3 (GSettings) support on imsettings
 Summary(pl.UTF-8):	Obsługa GNOME 3 (GSettings) dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
-Requires:	im-chooser
+Requires:	im-chooser >= 1.7.5
 Provides:	%{name}-desktop-module = %{version}-%{release}
 
 %description gnome3
@@ -215,7 +215,7 @@ Summary:	MATE <= 1.4 (MateConf) support on imsettings
 Summary(pl.UTF-8):	Obsługa MATE <= 1.4 (MateConfa) dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
-Requires:	im-chooser
+Requires:	im-chooser >= 1.7.5
 Provides:	%{name}-desktop-module = %{version}-%{release}
 
 %description mate-conf
@@ -240,7 +240,7 @@ Summary:	MATE 1.5+ (mate-settings) support on imsettings
 Summary(pl.UTF-8):	Obsługa MATE 1.5+ (mate-settings) dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
-Requires:	im-chooser
+Requires:	im-chooser >= 1.7.5
 Provides:	%{name}-desktop-module = %{version}-%{release}
 
 %description mate
@@ -265,7 +265,7 @@ Summary:	Qt support on imsettings
 Summary(pl.UTF-8):	Obsługa Qt dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
-Requires:	im-chooser
+Requires:	im-chooser >= 1.7.5
 Provides:	%{name}-desktop-module = %{version}-%{release}
 
 %description qt
@@ -288,7 +288,7 @@ Summary:	Xfce support on imsettings
 Summary(pl.UTF-8):	Obsługa Xfce dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
-Requires:	im-chooser
+Requires:	im-chooser >= 1.7.5
 Requires:	xfce4-settings >= 4.6.0
 Provides:	%{name}-desktop-module = %{version}-%{release}
 
@@ -312,7 +312,7 @@ Summary:	XIM support on imsettings
 Summary(pl.UTF-8):	Obsługa XIM dla imsettings
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
-Requires:	im-chooser
+Requires:	im-chooser >= 1.7.5
 Requires:	libgxim >= 0.5.0
 
 %description xim
